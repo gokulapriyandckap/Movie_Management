@@ -5,8 +5,9 @@ from flask import request
 from controller import signup #Imported  the signup Module from controller Directory.
 import hashlib # to hash the password
 from flask_jwt_extended import create_access_token, jwt_required, JWTManager, get_jwt_identity
-import re, datetime # regex
-
+from controller.movie_management import *
+import re # regex
+import datetime
 
 app = Flask(__name__)
 
@@ -38,7 +39,11 @@ def user_login():
 
     return user_data.login_verfication()
 
-
+@app.route("/createmovie",methods=["POST","GET"])
+@jwt_required()
+def create_movie():
+    request.json["user_id"] = get_jwt_identity() # get user id from jwt token and add to the user data
+    return movie_object.create_movie(request.json) # call the create movie functon and passing the arguement is user_data
 
 if __name__ == "__main__":
     # Code inside this block will only run if the script is the main program

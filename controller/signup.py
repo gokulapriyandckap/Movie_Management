@@ -1,4 +1,5 @@
 from main import *
+import re
 
 class User(DB_Connection.DB_Configuration): # Inherit the DB_configuration class.
      def __init__(self,email,password): # this constructor function get the paramters from the instanced object.
