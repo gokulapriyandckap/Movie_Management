@@ -4,9 +4,9 @@ from controller import DB_Connection
 from flask import request
 from controller import signup #Imported  the signup Module from controller Directory.
 import hashlib # to hash the password
+import re # regex
 from flask_jwt_extended import create_access_token, jwt_required, JWTManager, get_jwt_identity
-import re, datetime # regex
-
+import datetime
 
 app = Flask(__name__)
 
