@@ -37,7 +37,13 @@ def user_login():
     user_data = login.login(email,password)
 
     return user_data.login_verfication()
+    
 
+@app.route("/createmovie",methods=["POST","GET"])
+@jwt_required()
+def create_movie():
+    request.json["user_id"] = get_jwt_identity() # get user id from jwt token and add to the user data
+    return movie_object.create_movie(request.json) # call the create movie functon and passing the arguement is user_data
 
 
 if __name__ == "__main__":
