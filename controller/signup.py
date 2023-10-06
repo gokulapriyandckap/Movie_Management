@@ -39,3 +39,6 @@ class User(DB_Connection.DB_Configuration): # Inherit the DB_configuration class
          else:
              return "Email Already Exists"
 
+
+
+
