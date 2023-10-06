@@ -2,6 +2,8 @@ from main import *
 import re
 import hashlib
 
+# """comment added"""
+
 class User(DB_Connection.DB_Configuration): # Inherit the DB_configuration class.
      def __init__(self,email,password): # this constructor function get the paramters from the instanced object.
          super().__init__("Movie_management_system")  # Initialize the database configuration
