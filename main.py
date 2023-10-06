@@ -1,15 +1,18 @@
-from flask import Flask,flash
+from flask import Flask,flash, request
+from controller import  login
+from controller import DB_Connection
 from flask import request
-from controller import user #Imported  the user Module from controller Directory.
-from controller import DB_Connection #Imported the DB_connection Module from controller Directory.
+from controller import signup #Imported  the signup Module from controller Directory.
 import hashlib # to hash the password
-import re # regex
+from flask_jwt_extended import create_access_token, jwt_required, JWTManager, get_jwt_identity
+import re, datetime # regex
 
 
 app = Flask(__name__)
 
-# Set a secret key
-app.secret_key = 'movie@123' # set the secret key for our application.
+jwt = JWTManager(app)
+app.config["JWT_SECRET_KEY"] = "onetwothree"
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = datetime.timedelta(days=1)
 
 @app.route("/",methods = ["GET","POST"])
 def register():
@@ -22,9 +25,18 @@ def create_user():
     email = request.json['email'] # Get the Json data from the this route.
     password = request.json['password']
 
-    user_instance = user.User(email,password) # Instancing the class User in user module.
+    user_instance = signup.User(email,password) # Instancing the class User in user module.
 
     return user_instance.save_to_db() # To return the save_to_db function to save the datas to the Database.
+
+@app.route("/login",methods=["POST"])
+def user_login():
+    email = request.json['email']
+    password = request.json['password']
+
+    user_data = login.login(email,password)
+
+    return user_data.login_verfication()
 
 
 
