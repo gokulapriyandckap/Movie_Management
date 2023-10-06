@@ -3,6 +3,7 @@ from controller import  login
 from controller import DB_Connection
 from flask import request
 from controller import signup #Imported  the signup Module from controller Directory.
+from controller.movie_management import *
 import hashlib # to hash the password
 import re # regex
 from flask_jwt_extended import create_access_token, jwt_required, JWTManager, get_jwt_identity
