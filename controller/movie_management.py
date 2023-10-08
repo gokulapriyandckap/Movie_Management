@@ -2,7 +2,7 @@
 from controller import DB_Connection
 from main import *
 import json
-from bson import ObjectId
+from bson import ObjectId, json_util
 
 # movie management class it includes crud
 class movie_management(DB_Connection.DB_Configuration):
@@ -43,6 +43,11 @@ class movie_management(DB_Connection.DB_Configuration):
     def show_all_data(self,get_collection,except_data):
         all_data = get_collection.find({},except_data) # It returns the data you give the collection name
         return all_data
+
+    # update something
+    def update_data(self,collection_name, filter_field, delete_field): # removing field
+        collection_name.update_one(filter_field, {"$unset":delete_field})
+        return "remove successfully"
 
     # create new movie with validation
     def create_movie(self, get_data):
@@ -110,6 +115,9 @@ class movie_management(DB_Connection.DB_Configuration):
     def show_all_movies(self):
         data = self.show_all_data(self.movies,{"_id":0,"user_id":0}) # call the show_all_data funciton and pass the arguement called collection name
         return json_util.dumps(data) # it return the movie collection data
+
+    def remove_like(self,get_id): # remove like function passing the argument like collectionsname, filter value, delete field
+        return self.update_data(self.vote, {"movie_id":ObjectId(get_id),"like":1},{"like":1}) # collection name, filter field, delete field
 
     def delete_movie(self,get_id):
         get_id = ObjectId(get_id) # getting the data and convert to object id.

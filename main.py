@@ -66,6 +66,11 @@ def show_movie():
 def show_all_movies():
     return movie_object.show_all_movies()
 
+# removing like
+@app.route("/remove_like",methods=["PUT"])
+def remove_like():
+    movie_id = request.args.get('movie_id')
+    return movie_object.remove_like(movie_id)
 
 if __name__ == "__main__":
     # Code inside this block will only run if the script is the main program
