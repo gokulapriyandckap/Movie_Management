@@ -39,15 +39,17 @@ class movie_management(DB_Connection.DB_Configuration):
         else:
             return "true"
 
-    def show_datum(self):
-        return "jamsine"
+    # show all data its a general function. it get two parameter one is collection name and another one is expect fields
+    def show_all_data(self,get_collection,except_data):
+        all_data = get_collection.find({},except_data) # It returns the data you give the collection name
+        return all_data
 
     # create new movie with validation
     def create_movie(self, get_data):
         filter_value = get_data["movie_name"].replace(" ","").lower() # change the movie name into removing space and converted intoo lower case
 
         validated_data = self.existing_validate(self.movies,filter_value) # store the output of the existing method
-        if validated_data == "true": # if the existing method return true the data passing the save_dp method else return already exist
+        if validated_data == "true": # if the existing method return true the data passing the save_db method else return already exist
             self.save_db(self.movies, get_data)
             return "movie created successfully"
         else:
@@ -102,7 +104,12 @@ class movie_management(DB_Connection.DB_Configuration):
             "likesCount":len(liked),
             "dislikesCount":len(disliked)
         }
-        return output
+        return output # return all data in output variable
+
+    # show all movies function
+    def show_all_movies(self):
+        data = self.show_all_data(self.movies,{"_id":0,"user_id":0}) # call the show_all_data funciton and pass the arguement called collection name
+        return json_util.dumps(data) # it return the movie collection data
 
     def delete_movie(self,get_id):
         get_id = ObjectId(get_id) # getting the data and convert to object id.

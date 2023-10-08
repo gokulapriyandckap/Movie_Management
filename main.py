@@ -61,6 +61,12 @@ def show_movie():
     get_id = request.args.get('movie_id') # get movie id in query param
     return movie_object.show_movie(get_id) # passing the arguement movie id into the show movie function
 
+# show all movies route
+@app.route("/show_all_movies",methods=["GET"])
+def show_all_movies():
+    return movie_object.show_all_movies()
+
+
 if __name__ == "__main__":
     # Code inside this block will only run if the script is the main program
     # and not if it's imported as a module into another script.
