@@ -1,4 +1,4 @@
-from flask import Flask,flash, request
+from flask import Flask,flash, request, jsonify
 from controller import  login
 from controller import DB_Connection
 from flask import request
@@ -8,6 +8,7 @@ import hashlib # to hash the password
 import re # regex
 from flask_jwt_extended import create_access_token, jwt_required, JWTManager, get_jwt_identity
 import datetime
+from bson import ObjectId
 
 app = Flask(__name__)
 
@@ -46,6 +47,12 @@ def create_movie():
     request.json["user_id"] = get_jwt_identity() # get user id from jwt token and add to the user data
     return movie_object.create_movie(request.json) # call the create movie functon and passing the arguement is user_data
 
+
+# show single movie route
+@app.route("/showmovie",methods=["GET"])
+def show_movie():
+    get_id = request.args.get('movie_id') # get movie id in query param
+    return movie_object.show_movie(get_id) # passing the arguement movie id into the show movie function
 
 if __name__ == "__main__":
     # Code inside this block will only run if the script is the main program
