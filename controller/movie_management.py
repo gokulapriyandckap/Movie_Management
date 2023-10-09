@@ -9,7 +9,8 @@ class movie_management(DB_Connection.DB_Configuration):
     def __init__(self,db_name):
         super().__init__(db_name)
 
-    # save data to db
+    # save data to db  createmovie
+
     def save_db(self,collection_name,user_data):
         collection_name.insert_one(user_data)
 
@@ -64,7 +65,7 @@ class movie_management(DB_Connection.DB_Configuration):
         else:
             return "already exits"
 
-    def show_movie(self, get_movie_id):
+    def show_movie(self, get_movie_id, user_id):
         liked = [] # store who liked the movie in the list
         disliked = [] # store who dislike the movie in the list
 
@@ -88,7 +89,8 @@ class movie_management(DB_Connection.DB_Configuration):
             },
             {
                 "$match":{
-                    "movie_id":ObjectId(get_movie_id)
+                    "movie_id":ObjectId(get_movie_id),
+                    "user_id":ObjectId(user_id)
                 }
             }
         ]
@@ -103,7 +105,7 @@ class movie_management(DB_Connection.DB_Configuration):
                 disliked.append(users['details'][0]['name']) # if disliked members store into the disliked list
 
 
-        data = self.movies.find_one({"_id":ObjectId(get_movie_id)},{"_id":0,"user_id":0}) # get movie details with given movie id
+        data = self.movies.find_one({"_id":ObjectId(get_movie_id),"user_id":ObjectId(user_id)},{"_id":0,"user_id":0}) # get movie details with given movie id
 
         # finally store the values into the output variable like liked members, dis liked members, likedCount, dislikes count and movie details
         output = {
@@ -116,7 +118,7 @@ class movie_management(DB_Connection.DB_Configuration):
         return output # return all data in output variable
 
     # show all movies function
-    def show_all_movies(self):
+    def show_all_movies(self,user_id):
         data = self.show_all_data(self.movies,{"_id":0,"user_id":0}) # call the show_all_data funciton and pass the arguement called collection name
         return json_util.dumps(data) # it return the movie collection data
 
