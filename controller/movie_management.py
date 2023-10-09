@@ -21,8 +21,12 @@ class movie_management(DB_Connection.DB_Configuration):
         else:
             return "Id doesn't match"
     def delete_all_data(self,collectection_name):
-        collectection_name.delete_many({})  # this is for delete all data in the collection_name
-        return "all deleted"
+        count = collectection_name.count_documents({})
+        if count > 0:
+            collectection_name.delete_many({})  # this is for delete all data in the collection_name
+            return "all deleted"
+        else:
+            return "no movies in document"
 
 
 
