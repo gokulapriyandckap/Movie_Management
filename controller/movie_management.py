@@ -14,15 +14,19 @@ class movie_management(DB_Connection.DB_Configuration):
         collection_name.insert_one(user_data)
 
     def delete_data(self,collection_name,data):
-        delete_criteriea =  self.movies.find_one(data) # getting all the id data from the collection_name
+        delete_criteriea =  collection_name.find_one(data) # getting all the id data from the collection_name
         if delete_criteriea: # if Id match it will delete or it return the "Id doesn't match"
             collection_name.delete_one(data)
             return "Movie deleted successfully"
         else:
             return "Id doesn't match"
     def delete_all_data(self,collectection_name):
-        collectection_name.delete_many({})  # this is for delete all data in the collection_name
-        return "all deleted"
+        count = collectection_name.count_documents({})
+        if count > 0:
+            collectection_name.delete_many({})  # this is for delete all data in the collection_name
+            return "all deleted"
+        else:
+            return "no movies in document"
 
 
 
