@@ -116,6 +116,33 @@ class movie_management(DB_Connection.DB_Configuration):
         data = self.show_all_data(self.movies,{"_id":0,"user_id":0}) # call the show_all_data funciton and pass the arguement called collection name
         return json_util.dumps(data) # it return the movie collection data
 
+    def update_movie(self, movie_id,updated_data):
+        movie_id = ObjectId(movie_id)
+        updated_movieName = updated_data["updated_movie_name"]
+        updated_Duration = updated_data["updated_Duration"]
+        updated_DirectorName = updated_data["updated_DirectorName"]
+
+        filtered_movie = self.movies.find_one({"_id":movie_id}) # Query the movie with given Movie_id.
+
+        # checking if the given movie id is existing or not. if existing update the data with given data.
+        if filtered_movie:
+            self.movies.update_one( {"_id" : movie_id},
+            {
+                "$set":{
+                    "movie_name" : updated_movieName,
+                    "Duration": updated_Duration,
+                    "DirectorName" : updated_DirectorName
+                    }
+            },
+            upsert = True
+            )
+            return "Movie Updated Successfully"
+
+        else: # if the movie doesn't exist return the error.
+            return "Movie doesn't Exist"
+
+
+
     def remove_like(self,get_id): # remove like function passing the argument like collectionsname, filter value, delete field
         return self.update_data(self.vote, {"movie_id":ObjectId(get_id),"like":1},{"like":1}) # collection name, filter field, delete field
 
@@ -125,6 +152,9 @@ class movie_management(DB_Connection.DB_Configuration):
 
     def delete_all_movie(self):
         return self.delete_all_data(self.movies)
+
+
+
 
 
 movie_object = movie_management("Movie_management_system")
