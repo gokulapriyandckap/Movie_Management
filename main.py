@@ -4,6 +4,7 @@ from controller import DB_Connection
 from flask import request
 from controller import signup #Imported  the signup Module from controller Directory.
 from controller.movie_management import *
+from controller.votes import *
 import hashlib # to hash the password
 import re # regex
 from flask_jwt_extended import create_access_token, jwt_required, JWTManager, get_jwt_identity
@@ -90,6 +91,16 @@ def update_movie():
     return movie_object.update_movie(movie_id,updated_data) # sent the updated data to the update movie function in movie management class with movie user_id.
 
 
+
+
+@app.route("/createvote",methods=["POST"])
+@jwt_required()
+def like_movie():
+    movie_name = request.json["movie_name"] # get the movie name from request.
+    vote = request.json["vote"] # get the vote from request.
+    user_id = get_jwt_identity()
+
+    return vote_object.vote_the_movie(movie_name,vote,user_id) # sent the given data to the vote the movie function.
 
 
 if __name__ == "__main__":
