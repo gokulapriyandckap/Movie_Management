@@ -9,6 +9,8 @@ import re # regex
 from flask_jwt_extended import create_access_token, jwt_required, JWTManager, get_jwt_identity
 import datetime
 from bson import ObjectId
+import requests
+
 
 app = Flask(__name__)
 
@@ -23,10 +25,11 @@ def register():
 # This route is used to Create the register.
 @app.route("/register", methods=["POST"])
 def create_user():
+    name = request.json['name']
     email = request.json['email'] # Get the Json data from the this route.
     password = request.json['password']
 
-    user_instance = signup.User(email,password) # Instancing the class User in user module.
+    user_instance = signup.User(name,email,password) # Instancing the class User in user module.
 
     return user_instance.save_to_db() # To return the save_to_db function to save the datas to the Database.
 
@@ -72,7 +75,26 @@ def remove_like():
     movie_id = request.args.get('movie_id')
     return movie_object.remove_like(movie_id)
 
+
+@app.route("/update_movie", methods=["PUT"])
+def update_movie():
+    # Get movie_id from the request
+    movie_id = request.args.get('movie_id')
+
+    # getting the updated data from the request Json
+    updated_data = {
+                    "updated_movie_name" :request.json['movie_name'],
+                    "updated_Duration" : request.json['Duration'],
+                    "updated_DirectorName" : request.json['DirectorName']}
+
+    return movie_object.update_movie(movie_id,updated_data) # sent the updated data to the update movie function in movie management class with movie user_id.
+
+
+
+
 if __name__ == "__main__":
     # Code inside this block will only run if the script is the main program
     # and not if it's imported as a module into another script.
     app.run(debug=True)
+
+
