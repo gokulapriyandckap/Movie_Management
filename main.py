@@ -50,14 +50,13 @@ def create_movie():
     request.json["user_id"] = get_jwt_identity() # get user id from jwt token and add to the user data
     return movie_object.create_movie(request.json) # call the create movie functon and passing the arguement is user_data
 
-@app.route("/delete",methods=["DELETE"])
-def delete_movie():
-    get_id = request.args.get('movie_id') # I got the id
-    return movie_object.delete_movie(get_id) # returing to the movie management.py
+@app.route("/delete/<movie_id>",methods=["DELETE"])
+def delete_movie(movie_id):
+    return movie_management().delete_movie(movie_id) # returing to the movie management.py
 
 @app.route("/delete_all_data",methods = ["DELETE"])
 def delete_all_movie():
-    return movie_object.delete_all_movie()
+    return movie_management().delete_all_movie()
 
 # show single movie route
 @app.route("/showmovie",methods=["GET"])
