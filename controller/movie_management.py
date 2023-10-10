@@ -5,11 +5,7 @@ import json
 from bson import ObjectId, json_util
 
 # movie management class it includes crud
-class movie_management(DB_Connection.DB_Configuration):
-    def __init__(self,db_name):
-        super().__init__(db_name)
-
-    # save data to db  createmovie
+class movie_management():
 
     def save_db(self,collection_name,user_data):
         collection_name.insert_one(user_data)
@@ -148,4 +144,4 @@ class movie_management(DB_Connection.DB_Configuration):
         return self.delete_all_data(self.movies)
 
 
-movie_object = movie_management("Movie_management_system")
+movie_object = movie_management()
