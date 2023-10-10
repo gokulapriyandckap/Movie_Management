@@ -7,13 +7,12 @@ from bson import ObjectId, json_util
 # movie management class it includes crud
 class movie_management():
 
-
-    # save data to db
     def save_db(self,collection_name,user_data):
         collection_name.insert_one(user_data)
 
     def delete_data(self,collection_name,data):
-        delete_criteriea =  movies.find_one(data) # getting all the id data from the collection_name
+        delete_criteriea =  collection_name.find_one(data) # getting all the id data from the collection_name
+
         if delete_criteriea: # if Id match it will delete or it return the "Id doesn't match"
             collection_name.delete_one(data)
             return "Movie deleted successfully"
@@ -30,17 +29,15 @@ class movie_management():
 
 
     # check the movie name is already exist or not
-    def existing_validate(self,collection_name, check_data):
-        all_movie_name = [] # store movie name only in the list
-
-        # loop the movies and store into the all_movie_name list
-        for movie_name in movies.find({},{"_id":0}):
-            all_movie_name.append(movie_name["movie_name"].replace(" ","").lower())
-
-        if check_data in all_movie_name: # check the value is exist or not if exit it return flase else true
+    def existing_validate(self, check_data):
+        split_data = check_data.split()
+        add_space = " ".join(split_data)
+        validate_data = add_space.title()
+        db_data = movies.find_one({"movie_name":validate_data},{"_id":0})
+        if db_data:
             return False
         else:
-            return True
+            return validate_data
 
     # show all data its a general function. it get two parameter one is collection name and another one is expect fields
     def show_all_data(self,get_collection,except_data):
@@ -49,16 +46,15 @@ class movie_management():
 
     # create new movie with validation
     def create_movie(self, get_data):
-        filter_value = get_data["movie_name"].replace(" ","").lower() # change the movie name into removing space and converted intoo lower case
-
-        validated_data = self.existing_validate(movies,filter_value) # store the output of the existing method
-        if validated_data == True: # if the existing method return true the data passing the save_db method else return already exist
-            self.save_db(movies, get_data)
-            return "Movie created successfully"
+        validation = self.existing_validate(get_data["movie_name"])
+        if validation:
+            get_data["movie_name"] = validation
+            movies.insert_one(get_data)
+            return "movie inserted successfully"
         else:
-            return "Movie Already exist"
+            return "movie already exists"
 
-    def show_movie(self, get_movie_id):
+    def show_movie(self, get_movie_name):
         liked = [] # store who liked the movie in the list
         disliked = [] # store who dislike the movie in the list
 
@@ -77,12 +73,12 @@ class movie_management():
                     "_id":0,
                     "like":1,
                     "details.name":1,
-                    "movie_id":1
+                    "movie_name":1,
                 }
             },
             {
                 "$match":{
-                    "movie_id":ObjectId(get_movie_id)
+                    "movie_name":get_movie_name
                 }
             }
         ]
@@ -145,10 +141,6 @@ class movie_management():
 
     def delete_all_movie(self):
         return self.delete_all_data(movies)
-
-
-
-
 
 movie_object = movie_management()
 
