@@ -65,7 +65,7 @@ class movie_management(DB_Connection.DB_Configuration):
         else:
             return "already exits"
 
-    def show_movie(self, get_movie_id, user_id):
+    def show_movie(self, get_movie_id):
         liked = [] # store who liked the movie in the list
         disliked = [] # store who dislike the movie in the list
 
@@ -89,8 +89,7 @@ class movie_management(DB_Connection.DB_Configuration):
             },
             {
                 "$match":{
-                    "movie_id":ObjectId(get_movie_id),
-                    "user_id":ObjectId(user_id)
+                    "movie_id":ObjectId(get_movie_id)
                 }
             }
         ]
@@ -105,7 +104,7 @@ class movie_management(DB_Connection.DB_Configuration):
                 disliked.append(users['details'][0]['name']) # if disliked members store into the disliked list
 
 
-        data = self.movies.find_one({"_id":ObjectId(get_movie_id),"user_id":ObjectId(user_id)},{"_id":0,"user_id":0}) # get movie details with given movie id
+        data = self.movies.find_one({"_id":ObjectId(get_movie_id)},{"_id":0,"user_id":0}) # get movie details with given movie id
 
         # finally store the values into the output variable like liked members, dis liked members, likedCount, dislikes count and movie details
         output = {
@@ -118,7 +117,7 @@ class movie_management(DB_Connection.DB_Configuration):
         return output # return all data in output variable
 
     # show all movies function
-    def show_all_movies(self,user_id):
+    def show_all_movies(self):
         data = self.show_all_data(self.movies,{"_id":0,"user_id":0}) # call the show_all_data funciton and pass the arguement called collection name
         return json_util.dumps(data) # it return the movie collection data
 
@@ -158,9 +157,6 @@ class movie_management(DB_Connection.DB_Configuration):
 
     def delete_all_movie(self):
         return self.delete_all_data(self.movies)
-
-
-
 
 
 movie_object = movie_management("Movie_management_system")

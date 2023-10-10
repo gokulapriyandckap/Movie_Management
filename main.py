@@ -60,14 +60,12 @@ def delete_all_movie():
 
 # show single movie route
 @app.route("/showmovie",methods=["GET"])
-@jwt_required
 def show_movie():
     get_id = request.args.get('movie_id') # get movie id in query param
-    return movie_object.show_movie(get_id,get_jwt_identity()) # passing the arguement movie id into the show movie function
+    return movie_object.show_movie(get_id) # passing the arguement movie id into the show movie function
 
 # show all movies route
 @app.route("/show_all_movies",methods=["GET"])
-@jwt_required
 def show_all_movies():
     return movie_object.show_all_movies()
 
