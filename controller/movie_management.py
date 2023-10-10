@@ -25,9 +25,9 @@ class movie_management(DB_Connection.DB_Configuration):
         count = collectection_name.count_documents({})
         if count > 0:
             collectection_name.delete_many({})  # this is for delete all data in the collection_name
-            return "all deleted"
+            return "all Movies Deleted Successfully!"
         else:
-            return "no movies in document"
+            return "Movie Collection is Already Empty"
 
 
 
@@ -49,11 +49,6 @@ class movie_management(DB_Connection.DB_Configuration):
         all_data = get_collection.find({},except_data) # It returns the data you give the collection name
         return all_data
 
-    # update something
-    def update_data(self,collection_name, filter_field, delete_field): # removing field
-        collection_name.update_one(filter_field, {"$unset":delete_field})
-        return "remove successfully"
-
     # create new movie with validation
     def create_movie(self, get_data):
         filter_value = get_data["movie_name"].replace(" ","").lower() # change the movie name into removing space and converted intoo lower case
@@ -61,9 +56,9 @@ class movie_management(DB_Connection.DB_Configuration):
         validated_data = self.existing_validate(self.movies,filter_value) # store the output of the existing method
         if validated_data == "true": # if the existing method return true the data passing the save_db method else return already exist
             self.save_db(self.movies, get_data)
-            return "movie created successfully"
+            return "Movie created successfully"
         else:
-            return "already exits"
+            return "Movie Already exist"
 
     def show_movie(self, get_movie_id):
         liked = [] # store who liked the movie in the list
@@ -145,11 +140,6 @@ class movie_management(DB_Connection.DB_Configuration):
 
         else: # if the movie doesn't exist return the error.
             return "Movie doesn't Exist"
-
-
-
-    def remove_like(self,get_id): # remove like function passing the argument like collectionsname, filter value, delete field
-        return self.update_data(self.vote, {"movie_id":ObjectId(get_id),"like":1},{"like":1}) # collection name, filter field, delete field
 
     def delete_movie(self,get_id):
         get_id = ObjectId(get_id) # getting the data and convert to object id.
