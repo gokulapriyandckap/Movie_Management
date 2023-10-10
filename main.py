@@ -93,14 +93,13 @@ def update_movie():
 
 
 
-@app.route("/createvote",methods=["POST"])
+@app.route("/createvote/<movie_id>",methods=["POST"])
 @jwt_required()
-def like_movie():
-    movie_name = request.json["movie_name"] # get the movie name from request.
+def like_movie(movie_id):
     vote = request.json["vote"] # get the vote from request.
     user_id = get_jwt_identity()
 
-    return vote_object.vote_the_movie(movie_name,vote,user_id) # sent the given data to the vote the movie function.
+    return vote_object.vote_the_movie(movie_id,vote,user_id) # sent the given data to the vote the movie function.
 
 
 if __name__ == "__main__":
