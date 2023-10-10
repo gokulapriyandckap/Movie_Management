@@ -62,20 +62,13 @@ def delete_all_movie():
 # show single movie route
 @app.route("/showmovie",methods=["GET"])
 def show_movie():
-    get_id = request.args.get('movie_id') # get movie id in query param
-    return movie_object.show_movie(get_id) # passing the arguement movie id into the show movie function
+    get_name = request.args.get('movie_name') # get movie id in query param
+    return movie_object.show_movie(get_name) # passing the arguement movie id into the show movie function
 
 # show all movies route
 @app.route("/show_all_movies",methods=["GET"])
 def show_all_movies():
     return movie_object.show_all_movies()
-
-# removing like
-@app.route("/remove_like",methods=["PUT"])
-def remove_like():
-    movie_id = request.args.get('movie_id')
-    return movie_object.remove_like(movie_id)
-
 
 @app.route("/update_movie", methods=["PUT"])
 def update_movie():
@@ -102,6 +95,11 @@ def like_movie():
 
     return vote_object.vote_the_movie(movie_name,vote,user_id) # sent the given data to the vote the movie function.
 
+@app.route("/delete_like",methods=["DELETE"])
+@jwt_required()
+def remove_like():
+     movie_name = request.args.get('movie_name') # get movie_name on query params
+     return vote_object.remove_like(movie_name, get_jwt_identity()) # passing two arguements like movie_name and user_id
 
 if __name__ == "__main__":
     # Code inside this block will only run if the script is the main program

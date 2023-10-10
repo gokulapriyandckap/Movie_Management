@@ -37,7 +37,7 @@ class movie_management(DB_Connection.DB_Configuration):
 
         # loop the movies and store into the all_movie_name list
         for movie_name in self.movies.find({},{"_id":0}):
-            all_movie_name.append(movie_name["movie_name"].replace(" ","").lower())
+            all_movie_name.append(movie_name["name"].replace(" ","").lower())
 
         if check_data in all_movie_name: # check the value is exist or not if exit it return flase else true
             return "false"
@@ -60,7 +60,7 @@ class movie_management(DB_Connection.DB_Configuration):
         else:
             return "Movie Already exist"
 
-    def show_movie(self, get_movie_id):
+    def show_movie(self, get_movie_name):
         liked = [] # store who liked the movie in the list
         disliked = [] # store who dislike the movie in the list
 
@@ -79,12 +79,12 @@ class movie_management(DB_Connection.DB_Configuration):
                     "_id":0,
                     "like":1,
                     "details.name":1,
-                    "movie_id":1
+                    "movie_name":1,
                 }
             },
             {
                 "$match":{
-                    "movie_id":ObjectId(get_movie_id)
+                    "movie_name":get_movie_name
                 }
             }
         ]
@@ -99,8 +99,7 @@ class movie_management(DB_Connection.DB_Configuration):
                 disliked.append(users['details'][0]['name']) # if disliked members store into the disliked list
 
 
-        data = self.movies.find_one({"_id":ObjectId(get_movie_id)},{"_id":0,"user_id":0}) # get movie details with given movie id
-
+        data = self.movies.find_one({"name":get_movie_name},{"_id":0,"user_id":0}) # get movie details with given movie id
         # finally store the values into the output variable like liked members, dis liked members, likedCount, dislikes count and movie details
         output = {
             "movies_details":data,
@@ -150,4 +149,3 @@ class movie_management(DB_Connection.DB_Configuration):
 
 
 movie_object = movie_management("Movie_management_system")
-

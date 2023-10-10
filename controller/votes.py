@@ -15,10 +15,11 @@ class Vote(DB_Connection.DB_Configuration):
             self.vote.insert_one(vote_data)
             return "Vote inserted Succssfully"
 
-
-
-
-
-
+    def remove_like(self,movie_name, user_id): # getting movie_name and user_id
+        if movie_name:
+            self.vote.delete_one({"movie_name":movie_name, "user_id":user_id}) # delete document which movie_name and user_id are matched
+            return 'Removed your vote successfully'
+        else:
+            return "Movie name not matched"
 
 vote_object = Vote("Movie_management_system")
