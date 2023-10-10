@@ -2,10 +2,8 @@ from main import *
 import re
 import hashlib
 
-# comment added to check discord
-class User(DB_Connection.DB_Configuration): # Inherit the DB_configuration class.
-     def __init__(self,name,email,password): # this constructor function get the paramters from the instanced object.
-         super().__init__("Movie_management_system")  # Initialize the database configuration
+class User(): 
+     def __init__(self,name,email,password): # this constructor function get the paramters from the instanced object. # Initialize the database configuration
          self.name = name
          self.email = email
          self.password = password
@@ -38,9 +36,9 @@ class User(DB_Connection.DB_Configuration): # Inherit the DB_configuration class
 
 
      def save_to_db(self): # This method is used to store the data to the Database.
-         user_exist = self.users.find_one({"email": self.email})
+         user_exist = users.find_one({"email": self.email})
          if not user_exist:
-             self.users.insert_one(self.to_dict())
+             users.insert_one(self.to_dict())
              return "User Created Successfully!"
          else:
              return "Email Already Exists"
