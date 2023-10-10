@@ -10,10 +10,11 @@ class login(DB_Connection.DB_Configuration):
 
      def login_verfication(self):
          user_exist = self.users.find_one({"email":self.email})
+         print(user_exist["_id"])
          if user_exist:
              if user_exist["password"] == self.password:
-                 return create_access_token(identity=user_exist["_id"])
+                 return create_access_token(identity=str(user_exist["_id"]))
              else:
                  return "password not match"
          else:
-             return "Credintials not found"
+             return "Email not found"
