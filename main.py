@@ -1,6 +1,6 @@
 from flask import Flask,flash, request,jsonify
 from controller import  login
-from controller import DB_Connection
+from controller.DB_Connection import *
 from flask import request
 from controller import signup #Imported  the signup Module from controller Directory.
 from controller.movie_management import *

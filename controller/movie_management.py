@@ -12,6 +12,7 @@ class movie_management():
 
     def delete_data(self,collection_name,data):
         delete_criteriea =  collection_name.find_one(data) # getting all the id data from the collection_name
+
         if delete_criteriea: # if Id match it will delete or it return the "Id doesn't match"
             collection_name.delete_one(data)
             return "Movie deleted successfully"
@@ -28,17 +29,15 @@ class movie_management():
 
 
     # check the movie name is already exist or not
-    def existing_validate(self,collection_name, check_data):
-        all_movie_name = [] # store movie name only in the list
-
-        # loop the movies and store into the all_movie_name list
-        for movie_name in self.movies.find({},{"_id":0}):
-            all_movie_name.append(movie_name["name"].replace(" ","").lower())
-
-        if check_data in all_movie_name: # check the value is exist or not if exit it return flase else true
-            return "false"
+    def existing_validate(self, check_data):
+        split_data = check_data.split()
+        add_space = " ".join(split_data)
+        validate_data = add_space.title()
+        db_data = movies.find_one({"movie_name":validate_data},{"_id":0})
+        if db_data:
+            return False
         else:
-            return "true"
+            return validate_data
 
     # show all data its a general function. it get two parameter one is collection name and another one is expect fields
     def show_all_data(self,get_collection,except_data):
@@ -47,14 +46,13 @@ class movie_management():
 
     # create new movie with validation
     def create_movie(self, get_data):
-        filter_value = get_data["movie_name"].replace(" ","").lower() # change the movie name into removing space and converted intoo lower case
-
-        validated_data = self.existing_validate(self.movies,filter_value) # store the output of the existing method
-        if validated_data == "true": # if the existing method return true the data passing the save_db method else return already exist
-            self.save_db(self.movies, get_data)
-            return "Movie created successfully"
+        validation = self.existing_validate(get_data["movie_name"])
+        if validation:
+            get_data["movie_name"] = validation
+            movies.insert_one(get_data)
+            return "movie inserted successfully"
         else:
-            return "Movie Already exist"
+            return "movie already exists"
 
     def show_movie(self, get_movie_name):
         liked = [] # store who liked the movie in the list
@@ -85,7 +83,7 @@ class movie_management():
             }
         ]
 
-        datas = list(self.vote.aggregate(pipeline)) # store the return value into the datas variable
+        datas = list(votes.aggregate(pipeline)) # store the return value into the datas variable
 
         # check who liked and disliked the movie and store in the list
         for users in datas:
@@ -95,7 +93,8 @@ class movie_management():
                 disliked.append(users['details'][0]['name']) # if disliked members store into the disliked list
 
 
-        data = self.movies.find_one({"name":get_movie_name},{"_id":0,"user_id":0}) # get movie details with given movie id
+        data = movies.find_one({"_id":ObjectId(get_movie_id)},{"_id":0,"user_id":0}) # get movie details with given movie id
+
         # finally store the values into the output variable like liked members, dis liked members, likedCount, dislikes count and movie details
         output = {
             "movies_details":data,
@@ -108,7 +107,7 @@ class movie_management():
 
     # show all movies function
     def show_all_movies(self):
-        data = self.show_all_data(self.movies,{"_id":0,"user_id":0}) # call the show_all_data funciton and pass the arguement called collection name
+        data = self.show_all_data(movies,{"_id":0,"user_id":0}) # call the show_all_data funciton and pass the arguement called collection name
         return json_util.dumps(data) # it return the movie collection data
 
     def update_movie(self, movie_id,updated_data):
@@ -117,11 +116,11 @@ class movie_management():
         updated_Duration = updated_data["updated_Duration"]
         updated_DirectorName = updated_data["updated_DirectorName"]
 
-        filtered_movie = self.movies.find_one({"_id":movie_id}) # Query the movie with given Movie_id.
+        filtered_movie = movies.find_one({"_id":movie_id}) # Query the movie with given Movie_id.
 
         # checking if the given movie id is existing or not. if existing update the data with given data.
         if filtered_movie:
-            self.movies.update_one( {"_id" : movie_id},
+            movies.update_one( {"_id" : movie_id},
             {
                 "$set":{
                     "movie_name" : updated_movieName,
@@ -138,10 +137,10 @@ class movie_management():
 
     def delete_movie(self,get_id):
         get_id = ObjectId(get_id) # getting the data and convert to object id.
-        return self.delete_data(self.movies,{"_id":get_id})
+        return self.delete_data(movies,{"_id":get_id})
 
     def delete_all_movie(self):
-        return self.delete_all_data(self.movies)
-
+        return self.delete_all_data(movies)
 
 movie_object = movie_management()
+
