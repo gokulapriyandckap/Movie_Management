@@ -5,16 +5,15 @@ import json
 from bson import ObjectId, json_util
 
 # movie management class it includes crud
-class movie_management(DB_Connection.DB_Configuration):
-    def __init__(self,db_name):
-        super().__init__(db_name)
+class movie_management():
+
 
     # save data to db
     def save_db(self,collection_name,user_data):
         collection_name.insert_one(user_data)
 
     def delete_data(self,collection_name,data):
-        delete_criteriea =  self.movies.find_one(data) # getting all the id data from the collection_name
+        delete_criteriea =  movies.find_one(data) # getting all the id data from the collection_name
         if delete_criteriea: # if Id match it will delete or it return the "Id doesn't match"
             collection_name.delete_one(data)
             return "Movie deleted successfully"
@@ -35,31 +34,26 @@ class movie_management(DB_Connection.DB_Configuration):
         all_movie_name = [] # store movie name only in the list
 
         # loop the movies and store into the all_movie_name list
-        for movie_name in self.movies.find({},{"_id":0}):
+        for movie_name in movies.find({},{"_id":0}):
             all_movie_name.append(movie_name["movie_name"].replace(" ","").lower())
 
         if check_data in all_movie_name: # check the value is exist or not if exit it return flase else true
-            return "false"
+            return False
         else:
-            return "true"
+            return True
 
     # show all data its a general function. it get two parameter one is collection name and another one is expect fields
     def show_all_data(self,get_collection,except_data):
         all_data = get_collection.find({},except_data) # It returns the data you give the collection name
         return all_data
 
-    # update something
-    def update_data(self,collection_name, filter_field, delete_field): # removing field
-        collection_name.update_one(filter_field, {"$unset":delete_field})
-        return "remove successfully"
-
     # create new movie with validation
     def create_movie(self, get_data):
         filter_value = get_data["movie_name"].replace(" ","").lower() # change the movie name into removing space and converted intoo lower case
 
-        validated_data = self.existing_validate(self.movies,filter_value) # store the output of the existing method
-        if validated_data == "true": # if the existing method return true the data passing the save_db method else return already exist
-            self.save_db(self.movies, get_data)
+        validated_data = self.existing_validate(movies,filter_value) # store the output of the existing method
+        if validated_data == True: # if the existing method return true the data passing the save_db method else return already exist
+            self.save_db(movies, get_data)
             return "Movie created successfully"
         else:
             return "Movie Already exist"
@@ -93,7 +87,7 @@ class movie_management(DB_Connection.DB_Configuration):
             }
         ]
 
-        datas = list(self.vote.aggregate(pipeline)) # store the return value into the datas variable
+        datas = list(votes.aggregate(pipeline)) # store the return value into the datas variable
 
         # check who liked and disliked the movie and store in the list
         for users in datas:
@@ -103,7 +97,7 @@ class movie_management(DB_Connection.DB_Configuration):
                 disliked.append(users['details'][0]['name']) # if disliked members store into the disliked list
 
 
-        data = self.movies.find_one({"_id":ObjectId(get_movie_id)},{"_id":0,"user_id":0}) # get movie details with given movie id
+        data = movies.find_one({"_id":ObjectId(get_movie_id)},{"_id":0,"user_id":0}) # get movie details with given movie id
 
         # finally store the values into the output variable like liked members, dis liked members, likedCount, dislikes count and movie details
         output = {
@@ -117,7 +111,7 @@ class movie_management(DB_Connection.DB_Configuration):
 
     # show all movies function
     def show_all_movies(self):
-        data = self.show_all_data(self.movies,{"_id":0,"user_id":0}) # call the show_all_data funciton and pass the arguement called collection name
+        data = self.show_all_data(movies,{"_id":0,"user_id":0}) # call the show_all_data funciton and pass the arguement called collection name
         return json_util.dumps(data) # it return the movie collection data
 
     def update_movie(self, movie_id,updated_data):
@@ -126,11 +120,11 @@ class movie_management(DB_Connection.DB_Configuration):
         updated_Duration = updated_data["updated_Duration"]
         updated_DirectorName = updated_data["updated_DirectorName"]
 
-        filtered_movie = self.movies.find_one({"_id":movie_id}) # Query the movie with given Movie_id.
+        filtered_movie = movies.find_one({"_id":movie_id}) # Query the movie with given Movie_id.
 
         # checking if the given movie id is existing or not. if existing update the data with given data.
         if filtered_movie:
-            self.movies.update_one( {"_id" : movie_id},
+            movies.update_one( {"_id" : movie_id},
             {
                 "$set":{
                     "movie_name" : updated_movieName,
@@ -145,21 +139,16 @@ class movie_management(DB_Connection.DB_Configuration):
         else: # if the movie doesn't exist return the error.
             return "Movie doesn't Exist"
 
-
-
-    def remove_like(self,get_id): # remove like function passing the argument like collectionsname, filter value, delete field
-        return self.update_data(self.vote, {"movie_id":ObjectId(get_id),"like":1},{"like":1}) # collection name, filter field, delete field
-
     def delete_movie(self,get_id):
         get_id = ObjectId(get_id) # getting the data and convert to object id.
-        return self.delete_data(self.movies,{"_id":get_id})
+        return self.delete_data(movies,{"_id":get_id})
 
     def delete_all_movie(self):
-        return self.delete_all_data(self.movies)
+        return self.delete_all_data(movies)
 
 
 
 
 
-movie_object = movie_management("Movie_management_system")
+movie_object = movie_management()
 
