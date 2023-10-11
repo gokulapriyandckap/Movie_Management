@@ -16,17 +16,14 @@ class movie_management():
         collection_name.insert_one(user_data)
 
     def delete_data(self,collection_name,data):
-        # delete_criteriea =  collection_name.find_one(data) # getting all the id data from the collection_name
-
-        # if delete_criteriea: # if Id match it will delete or it return the "Id doesn't match"
-        print(collection_name.delete_one(data))
-            # return "Movie deleted successfully"
-        # else:
-        #     return "Id doesn't match"
+        delete_single_movie = collection_name.delete_one(data).deleted_count
+        if delete_single_movie == 1:
+            return "Movie deleted successfully"
+        else:
+            return "Id doesn't match"
     def delete_all_data(self,collectection_name):
-        count = collectection_name.count_documents({})
-        if count > 0:
-            collectection_name.delete_many({})  # this is for delete all data in the collection_name
+        delete_multiple_movies = collectection_name.delete_many({}).deleted_count
+        if delete_multiple_movies > 0:
             return "all Movies Deleted Successfully!"
         else:
             return "Movie Collection is Already Empty"
