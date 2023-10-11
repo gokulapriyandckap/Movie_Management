@@ -70,16 +70,14 @@ def show_movie():
 def show_all_movies():
     return movie_object.show_all_movies()
 
-@app.route("/update_movie", methods=["PUT"])
-def update_movie():
-    # Get movie_id from the request
-    movie_id = request.args.get('movie_id')
-
+@app.route("/update_movie/<movie_id>", methods=["PUT"])
+def update_movie(movie_id):
     # getting the updated data from the request Json
     updated_data = {
                     "updated_movie_name" :request.json['movie_name'],
                     "updated_Duration" : request.json['Duration'],
-                    "updated_DirectorName" : request.json['DirectorName']}
+                    "updated_DirectorName" : request.json['DirectorName']
+    }
 
     return movie_object.update_movie(movie_id,updated_data) # sent the updated data to the update movie function in movie management class with movie user_id.
 
