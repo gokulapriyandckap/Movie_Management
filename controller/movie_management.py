@@ -31,8 +31,6 @@ class movie_management():
         else:
             return "Movie Collection is Already Empty"
 
-
-
     # check the movie name is already exist or not
     def existing_validate(self, check_data):
         split_data = check_data.split()
@@ -44,7 +42,37 @@ class movie_management():
         else:
             return validate_data
 
+    def update_movie(self, movie_id,updated_data):
+        updated_movieName = updated_data["updated_movie_name"]
+        movie_validation =  self.existing_validate(updated_movieName)
 
+        # return movie_validation
+        if movie_validation:
+            movie_id = ObjectId(movie_id)
+            updated_Duration = updated_data["updated_Duration"]
+            updated_DirectorName = updated_data["updated_DirectorName"]
+
+            # checking if the given movie id is existing or not. if existing update the data with given data.
+            movies.update_one({"_id": movie_id},
+                                  {
+                                      "$set": {
+                                          "movie_name": movie_validation,
+                                          "Duration": updated_Duration,
+                                          "DirectorName": updated_DirectorName
+                                      }
+                                  },
+                                  upsert=True
+                                  )
+            return "Movie Updated Successfully"
+        else:
+            return "movie already exists"
+
+
+
+    # show all data its a general function. it get two parameter one is collection name and another one is expect fields
+    def show_all_data(self,get_collection,except_data):
+        all_data = get_collection.find({},except_data) # It returns the data you give the collection name
+        return all_data
     # create new movie with validation
     def create_movie(self, get_data):
         validation = self.existing_validate(get_data["movie_name"])
@@ -116,30 +144,7 @@ class movie_management():
         # return json.dumps(data, default=self.serialize_data)
         return json_util.dumps(data)# it return the movie collection data
 
-    def update_movie(self, movie_id,updated_data):
-        movie_id = ObjectId(movie_id)
-        updated_movieName = updated_data["updated_movie_name"]
-        updated_Duration = updated_data["updated_Duration"]
-        updated_DirectorName = updated_data["updated_DirectorName"]
 
-        filtered_movie = movies.find_one({"_id":movie_id}) # Query the movie with given Movie_id.
-
-        # checking if the given movie id is existing or not. if existing update the data with given data.
-        if filtered_movie:
-            movies.update_one( {"_id" : movie_id},
-            {
-                "$set":{
-                    "movie_name" : updated_movieName,
-                    "Duration": updated_Duration,
-                    "DirectorName" : updated_DirectorName
-                    }
-            },
-            upsert = True
-            )
-            return "Movie Updated Successfully"
-
-        else: # if the movie doesn't exist return the error.
-            return "Movie doesn't Exist"
 
     def delete_movie(self,get_id):
         get_id = ObjectId(get_id) # getting the data and convert to object id.
