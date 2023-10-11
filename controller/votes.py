@@ -17,9 +17,9 @@ class Vote():
         else:
             return "Movie not Found"
 
-    def remove_like(self,movie_name, user_id): # getting movie_name and user_id
-        if movie_name:
-            self.vote.delete_one({"movie_name":movie_name, "user_id":user_id}) # delete document which movie_name and user_id are matched
+    def remove_like(self,movie_id, user_id): # getting movie_name and user_id
+        if movie_id:
+            votes.delete_one({"movie_id": ObjectId(movie_id), "user_id":ObjectId(user_id)})  # delete document which movie_name and user_id are matched
             return 'Removed your vote successfully'
         else:
             return "Movie name not matched"

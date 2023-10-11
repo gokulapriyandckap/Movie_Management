@@ -47,26 +47,24 @@ def user_login():
 @app.route("/createmovie",methods=["POST","GET"])
 @jwt_required()
 def create_movie():
-    request.json["user_id"] = get_jwt_identity() # get user id from jwt token and add to the user data
+    request.json["user_id"] = ObjectId(get_jwt_identity()) # get user id from jwt token and add to the user data
     return movie_object.create_movie(request.json) # call the create movie functon and passing the arguement is user_data
 
-@app.route("/delete",methods=["DELETE"])
-def delete_movie():
-    get_id = request.args.get('movie_id') # I got the id
-    return movie_object.delete_movie(get_id) # returing to the movie management.py
+@app.route("/delete/<movie_id>",methods=["DELETE"])
+def delete_movie(movie_id):
+    return movie_management().delete_movie(movie_id) # returing to the movie management.py
 
 @app.route("/delete_all_data",methods = ["DELETE"])
 def delete_all_movie():
-    return movie_object.delete_all_movie()
+    return movie_management().delete_all_movie()
 
 # show single movie route
-@app.route("/showmovie",methods=["GET"])
-def show_movie():
-    get_name = request.args.get('movie_name') # get movie id in query param
-    return movie_object.show_movie(get_name) # passing the arguement movie id into the show movie function
+@app.route("/showmovie/<movie_id>",methods=["GET"])
+def show_movie(movie_id):
+    return movie_object.show_movie(movie_id) # passing the arguement movie id into the show movie function
 
 # show all movies route
-@app.route("/show_all_movies",methods=["GET"])
+@app.route("/showmovie",methods=["GET"])
 def show_all_movies():
     return movie_object.show_all_movies()
 
@@ -92,11 +90,10 @@ def like_movie(movie_id):
 
     return vote_object.vote_the_movie(movie_id,vote,user_id) # sent the given data to the vote the movie function.
 
-@app.route("/delete_like",methods=["DELETE"])
+@app.route("/delete_like/<movie_id>",methods=["DELETE"])
 @jwt_required()
-def remove_like():
-     movie_name = request.args.get('movie_name') # get movie_name on query params
-     return vote_object.remove_like(movie_name, get_jwt_identity()) # passing two arguements like movie_name and user_id
+def remove_like(movie_id):
+     return vote_object.remove_like(movie_id, get_jwt_identity()) # passing two arguements like movie_name and user_id
 
 if __name__ == "__main__":
     # Code inside this block will only run if the script is the main program
