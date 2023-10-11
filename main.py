@@ -60,13 +60,17 @@ def delete_all_movie():
 
 # show single movie route
 @app.route("/showmovie/<movie_id>",methods=["GET"])
+@jwt_required()
 def show_movie(movie_id):
-    return movie_object.show_movie(movie_id) # passing the arguement movie id into the show movie function
+    get_user_id = ObjectId(get_jwt_identity())
+    return movie_object.show_movie(movie_id, get_user_id) # passing the arguement movie id into the show movie function
 
 # show all movies route
 @app.route("/showmovie",methods=["GET"])
+@jwt_required()
 def show_all_movies():
-    return movie_object.show_all_movies()
+    user_id = get_jwt_identity()
+    return movie_object.show_all_movies(user_id)
 
 @app.route("/update_movie/<movie_id>", methods=["PUT"])
 def update_movie(movie_id):

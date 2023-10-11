@@ -32,15 +32,14 @@ class movie_management():
             return "Movie Collection is Already Empty"
 
     # check the movie name is already exist or not
-    def existing_validate(self, check_data):
+    def serialize_data(self, check_data):
         split_data = check_data.split()
         add_space = " ".join(split_data)
         validate_data = add_space.title()
-        db_data = movies.find_one({"movie_name":validate_data},{"_id":0})
-        if db_data:
-            return False
-        else:
-            return validate_data
+        return validate_data
+
+    def check_data(self, collection_name, get_check_data):
+        return collection_name.find_one(get_check_data)
 
     def update_movie(self, movie_id,updated_data):
         updated_movieName = updated_data["updated_movie_name"]
@@ -67,83 +66,82 @@ class movie_management():
         else:
             return "movie already exists"
 
-
-
-    # show all data its a general function. it get two parameter one is collection name and another one is expect fields
-    def show_all_data(self,get_collection,except_data):
-        all_data = get_collection.find({},except_data) # It returns the data you give the collection name
-        return all_data
     # create new movie with validation
     def create_movie(self, get_data):
-        validation = self.existing_validate(get_data["movie_name"])
-        if validation:
-            get_data["movie_name"] = validation
+        get_serialize_data = self.serialize_data(get_data["movie_name"])
+        checking_data = self.check_data(movies, {"movie_name":get_serialize_data})
+        if not checking_data:
+            get_data["movie_name"] = get_serialize_data
             movies.insert_one(get_data)
             return "movie inserted successfully"
         else:
             return "movie already exists"
 
-    def show_movie(self, get_movie_id):
-        if not get_movie_id:
-            all_movies = movies.find({})
-            return json_util.dumps(all_movies)
-        else:
-            liked = [] # store who liked the movie in the list
-            disliked = [] # store who dislike the movie in the list
+    def show_movie(self, get_movie_id, user_id):
+            data = movies.find_one({"_id":ObjectId(get_movie_id),"user_id":user_id},{"_id":0,"user_id":0}) # get movie details with given movie id
 
-            # join users and likes collection and get users name
-            pipeline = [
-                {
-                    "$lookup": {
-                        "from": "users",
-                        "localField": "user_id",
-                        "foreignField": "_id",
-                        "as": "details"
+            if data:
+                liked = [] # store who liked the movie in the list
+                disliked = [] # store who dislike the movie in the list
+
+                # join users and likes collection and get users name
+                pipeline = [
+                    {
+                        "$lookup": {
+                            "from": "users",
+                            "localField": "user_id",
+                            "foreignField": "_id",
+                            "as": "details"
+                        }
+                    },
+                    {
+                        "$project": {
+                            "_id":0,
+                            "votes":1,
+                            "details.name":1,
+                            "movie_id":1
+                        }
+                    },
+                    {
+                        "$match": {
+                            "movie_id":ObjectId(get_movie_id)
+                        }
                     }
-                },
-                {
-                    "$project": {
-                        "_id":0,
-                        "votes":1,
-                        "details.name":1,
-                        "movie_id":1
-                    }
-                },
-                {
-                    "$match": {
-                        "movie_id":ObjectId(get_movie_id)
-                    }
+                ]
+
+                value = votes.aggregate(pipeline)
+
+                # check who liked and disliked the movie and store in the list
+                for users in value:
+                    if users['votes'] == 1:
+                        liked.append(users['details'][0]['name']) # if liked members store into the liked list
+                    elif users['votes'] == 0:
+                        disliked.append(users['details'][0]['name']) # if disliked members store into the disliked list
+
+                # finally store the values into the output variable like liked members, dis liked members, likedCount, dislikes count and movie details
+                output = {
+                    "movies_details":data,
+                    "likes":liked,
+                    "dislikes":disliked,
+                    "likesCount":len(liked),
+                    "dislikesCount":len(disliked)
                 }
-            ]
+                return output # return all data in output variable
+            else:
+                return "Not found"
 
-            value = votes.aggregate(pipeline)
-
-            # check who liked and disliked the movie and store in the list
-            for users in value:
-                if users['votes'] == 1:
-                    liked.append(users['details'][0]['name']) # if liked members store into the liked list
-                elif users['votes'] == 0:
-                    disliked.append(users['details'][0]['name']) # if disliked members store into the disliked list
-
-
-            data = movies.find_one({"_id":ObjectId(get_movie_id)},{"_id":0,"user_id":0}) # get movie details with given movie id
-
-            # finally store the values into the output variable like liked members, dis liked members, likedCount, dislikes count and movie details
-            output = {
-                "movies_details":data,
-                "likes":liked,
-                "dislikes":disliked,
-                "likesCount":len(liked),
-                "dislikesCount":len(disliked)
-            }
-            return output # return all data in output variable
+    @staticmethod
+    def serialize_objectid(obj):
+        if isinstance(obj, ObjectId):
+            return str(obj)
+        raise TypeError(f"Object of type {type(obj)} is not JSON serializable")
 
     # show all movies function
-    def show_all_movies(self):
-        data = movies.find({}) # call the show_all_data funciton and pass the arguement called collection name
-        # return json.dumps(data, default=self.serialize_data)
-        return json_util.dumps(data)# it return the movie collection data
+    def show_all_movies(self, get_user_id):
 
+        data = movies.find({"user_id":ObjectId(get_user_id)})
+        data_list = [item for item in data]
+        return json.dumps(data_list, default=self.serialize_objectid)
 
 
     def delete_movie(self,get_id):
