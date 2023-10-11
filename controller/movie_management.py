@@ -16,13 +16,13 @@ class movie_management():
         collection_name.insert_one(user_data)
 
     def delete_data(self,collection_name,data):
-        delete_criteriea =  collection_name.find_one(data) # getting all the id data from the collection_name
+        # delete_criteriea =  collection_name.find_one(data) # getting all the id data from the collection_name
 
-        if delete_criteriea: # if Id match it will delete or it return the "Id doesn't match"
-            collection_name.delete_one(data)
-            return "Movie deleted successfully"
-        else:
-            return "Id doesn't match"
+        # if delete_criteriea: # if Id match it will delete or it return the "Id doesn't match"
+        print(collection_name.delete_one(data))
+            # return "Movie deleted successfully"
+        # else:
+        #     return "Id doesn't match"
     def delete_all_data(self,collectection_name):
         count = collectection_name.count_documents({})
         if count > 0:
@@ -113,6 +113,7 @@ class movie_management():
     # show all movies function
     def show_all_movies(self):
         data = movies.find({}) # call the show_all_data funciton and pass the arguement called collection name
+        # return json.dumps(data, default=self.serialize_data)
         return json_util.dumps(data)# it return the movie collection data
 
     def update_movie(self, movie_id,updated_data):
@@ -148,4 +149,3 @@ class movie_management():
         return self.delete_all_data(movies)
 
 movie_object = movie_management()
-
