@@ -7,6 +7,11 @@ from bson import ObjectId, json_util
 # movie management class it includes crud
 class movie_management():
 
+    def serialize_data(self,data):
+        if '_id' in data:
+            data['_id'] = str(data['_id'])
+            return data
+
     def save_db(self,collection_name,user_data):
         collection_name.insert_one(user_data)
 
@@ -39,10 +44,6 @@ class movie_management():
         else:
             return validate_data
 
-    # show all data its a general function. it get two parameter one is collection name and another one is expect fields
-    def show_all_data(self,get_collection,except_data):
-        all_data = get_collection.find({},except_data) # It returns the data you give the collection name
-        return all_data
 
     # create new movie with validation
     def create_movie(self, get_data):
@@ -54,61 +55,65 @@ class movie_management():
         else:
             return "movie already exists"
 
-    def show_movie(self, get_movie_name):
-        liked = [] # store who liked the movie in the list
-        disliked = [] # store who dislike the movie in the list
+    def show_movie(self, get_movie_id):
+        if not get_movie_id:
+            all_movies = movies.find({})
+            return json_util.dumps(all_movies)
+        else:
+            liked = [] # store who liked the movie in the list
+            disliked = [] # store who dislike the movie in the list
 
-        # join users and likes collection and get users name
-        pipeline = [
-            {
-                "$lookup": {
-                    "from": "users",
-                    "localField": "user_id",
-                    "foreignField": "_id",
-                    "as": "details"
+            # join users and likes collection and get users name
+            pipeline = [
+                {
+                    "$lookup": {
+                        "from": "users",
+                        "localField": "user_id",
+                        "foreignField": "_id",
+                        "as": "details"
+                    }
+                },
+                {
+                    "$project": {
+                        "_id":0,
+                        "votes":1,
+                        "details.name":1,
+                        "movie_id":1
+                    }
+                },
+                {
+                    "$match": {
+                        "movie_id":ObjectId(get_movie_id)
+                    }
                 }
-            },
-            {
-                "$project":{
-                    "_id":0,
-                    "like":1,
-                    "details.name":1,
-                    "movie_name":1,
-                }
-            },
-            {
-                "$match":{
-                    "movie_name":get_movie_name
-                }
+            ]
+
+            value = votes.aggregate(pipeline)
+
+            # check who liked and disliked the movie and store in the list
+            for users in value:
+                if users['votes'] == 1:
+                    liked.append(users['details'][0]['name']) # if liked members store into the liked list
+                elif users['votes'] == 0:
+                    disliked.append(users['details'][0]['name']) # if disliked members store into the disliked list
+
+
+            data = movies.find_one({"_id":ObjectId(get_movie_id)},{"_id":0,"user_id":0}) # get movie details with given movie id
+
+            # finally store the values into the output variable like liked members, dis liked members, likedCount, dislikes count and movie details
+            output = {
+                "movies_details":data,
+                "likes":liked,
+                "dislikes":disliked,
+                "likesCount":len(liked),
+                "dislikesCount":len(disliked)
             }
-        ]
-
-        datas = list(votes.aggregate(pipeline)) # store the return value into the datas variable
-
-        # check who liked and disliked the movie and store in the list
-        for users in datas:
-            if users['like'] == 1:
-                liked.append(users['details'][0]['name']) # if liked members store into the liked list
-            elif users['like'] == 0:
-                disliked.append(users['details'][0]['name']) # if disliked members store into the disliked list
-
-
-        data = movies.find_one({"_id":ObjectId(get_movie_id)},{"_id":0,"user_id":0}) # get movie details with given movie id
-
-        # finally store the values into the output variable like liked members, dis liked members, likedCount, dislikes count and movie details
-        output = {
-            "movies_details":data,
-            "likes":liked,
-            "dislikes":disliked,
-            "likesCount":len(liked),
-            "dislikesCount":len(disliked)
-        }
-        return output # return all data in output variable
+            return output # return all data in output variable
 
     # show all movies function
     def show_all_movies(self):
-        data = self.show_all_data(movies,{"_id":0,"user_id":0}) # call the show_all_data funciton and pass the arguement called collection name
-        return json_util.dumps(data) # it return the movie collection data
+        data = movies.find({}) # call the show_all_data funciton and pass the arguement called collection name
+        return json_util.dumps(data)# it return the movie collection data
 
     def update_movie(self, movie_id,updated_data):
         movie_id = ObjectId(movie_id)
