@@ -4,8 +4,14 @@ from main import *
 import json
 from bson import ObjectId, json_util
 
+
 # movie management class it includes crud
 class movie_management():
+
+    def __init__(self,movie_id,user_id,updated_data):
+        self.movie_id = ObjectId(movie_id)
+        self.updated_data = updated_data
+        self.user_id = ObjectId(user_id)
 
     def save_db(self,collection_name,user_data):
         collection_name.insert_one(user_data)
@@ -33,30 +39,25 @@ class movie_management():
     def check_data(self, collection_name, get_check_data):
         return collection_name.find_one(get_check_data)
 
-    def update_movie(self, movie_id,updated_data):
-        updated_movieName = updated_data["updated_movie_name"]
-        movie_validation =  self.existing_validate(updated_movieName)
+    def update_movie(self):
+        updated_movieName = self.updated_data["updated_movie_name"]
+        seraialize_movie_name =  self.serialize_data(updated_movieName)
 
-        # return movie_validation
-        if movie_validation:
-            movie_id = ObjectId(movie_id)
-            updated_Duration = updated_data["updated_Duration"]
-            updated_DirectorName = updated_data["updated_DirectorName"]
+        db_check = self.check_data(movies,{"movie_name":seraialize_movie_name,"user_id":self.user_id})
+        updated_Duration = self.updated_data["updated_Duration"]
+        updated_DirectorName = self.updated_data["updated_DirectorName"]
 
-            # checking if the given movie id is existing or not. if existing update the data with given data.
-            movies.update_one({"_id": movie_id},
-                                  {
-                                      "$set": {
-                                          "movie_name": movie_validation,
-                                          "Duration": updated_Duration,
-                                          "DirectorName": updated_DirectorName
-                                      }
-                                  },
-                                  upsert=True
-                                  )
+        if not db_check:
+            movies.update_one({"_id": ObjectId(self.movie_id)},{"$set": {"movie_name": seraialize_movie_name,"Duration": updated_Duration,"DirectorName": updated_DirectorName}},upsert=False)
             return "Movie Updated Successfully"
         else:
-            return "movie already exists"
+            if db_check["movie_name"] == seraialize_movie_name and db_check["Duration"] == updated_Duration and db_check["DirectorName"] == updated_DirectorName:
+                return "Please make it any changes"
+            else:
+                movies.update_one({"_id": ObjectId(self.movie_id)},{"$set": {"movie_name": seraialize_movie_name,"Duration": updated_Duration,"DirectorName": updated_DirectorName}},upsert=False)
+                return "movie updated successfully"
+
+
 
     # create new movie with validation
     def create_movie(self, get_data):
@@ -122,18 +123,12 @@ class movie_management():
             else:
                 return "Not found"
 
-    @staticmethod
-    def serialize_objectid(obj):
-        if isinstance(obj, ObjectId):
-            return str(obj)
-        raise TypeError(f"Object of type {type(obj)} is not JSON serializable")
-
     # show all movies function
     def show_all_movies(self, get_user_id):
 
         data = movies.find({"user_id":ObjectId(get_user_id)})
         data_list = [item for item in data]
-        return json.dumps(data_list, default=self.serialize_objectid)
+        return json.dumps(data_list, default=serialize_objectid)
 
 
     def delete_movie(self,get_id):
@@ -143,4 +138,10 @@ class movie_management():
     def delete_all_movie(self):
         return self.delete_all_data(movies)
 
-movie_object = movie_management()
+
+
+
+def serialize_objectid(obj):
+    if isinstance(obj, ObjectId):
+        return str(obj)
+    raise TypeError(f"Object of type {type(obj)} is not JSON serializable")
