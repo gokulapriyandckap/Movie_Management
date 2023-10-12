@@ -3,7 +3,7 @@ from main import *
 
 class Vote():
 
-    def __init__(self,movie_id,vote,user_id):
+    def __init__(self, movie_id = None, vote = None, user_id = None):
         self.movie_id = ObjectId(movie_id)
         self.vote = vote
         self.user_id = ObjectId(user_id)
@@ -22,9 +22,12 @@ class Vote():
         else:
             return "Movie not Found"
 
-    def remove_like(self,movie_id, user_id): # getting movie_name and user_id
-        if movie_id:
-            votes.delete_one({"movie_id": ObjectId(movie_id), "user_id":ObjectId(user_id)})  # delete document which movie_name and user_id are matched
-            return 'Removed your vote successfully'
+    def remove_like(self): # getting movie_name and user_id
+        if self.movie_id:
+            delete_vote = votes.delete_one({"movie_id": self.movie_id, "user_id":self.user_id})  # delete document which movie_name and user_id are matched
+            if delete_vote.deleted_count == 1:
+                return "Vote deleted successfully"
+            else:
+                return "user not found"
         else:
             return "Movie name not matched"

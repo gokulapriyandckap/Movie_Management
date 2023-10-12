@@ -102,7 +102,8 @@ def like_movie(movie_id):
 @app.route("/delete_like/<movie_id>",methods=["DELETE"])
 @jwt_required()
 def remove_like(movie_id):
-     return vote_object.remove_like(movie_id, get_jwt_identity()) # passing two arguements like movie_name and user_id
+     vote_obj = Vote(movie_id=movie_id, user_id=get_jwt_identity())
+     return vote_obj.remove_like() # passing two arguements like movie_name and user_id
 
 if __name__ == "__main__":
     # Code inside this block will only run if the script is the main program
