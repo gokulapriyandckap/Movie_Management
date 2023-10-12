@@ -8,7 +8,7 @@ from bson import ObjectId, json_util
 # movie management class it includes crud
 class movie_management():
 
-    def __init__(self,movie_id,user_id,updated_data):
+    def __init__(self, movie_id = None, user_id = None, updated_data = None):
         self.movie_id = ObjectId(movie_id)
         self.updated_data = updated_data
         self.user_id = ObjectId(user_id)
@@ -60,18 +60,18 @@ class movie_management():
 
 
     # create new movie with validation
-    def create_movie(self, get_data):
-        get_serialize_data = self.serialize_data(get_data["movie_name"])
-        checking_data = self.check_data(movies, {"movie_name":get_serialize_data,"user_id":get_data["user_id"]})
+    def create_movie(self):
+        get_serialize_data = self.serialize_data(self.updated_data["movie_name"])
+        checking_data = self.check_data(movies, {"movie_name":get_serialize_data,"user_id":self.updated_data["user_id"]})
         if not checking_data:
-            get_data["movie_name"] = get_serialize_data
-            movies.insert_one(get_data)
+            self.updated_data["movie_name"] = get_serialize_data
+            movies.insert_one(self.updated_data)
             return "movie inserted successfully"
         else:
             return "movie already exists"
 
-    def show_movie(self, get_movie_id, user_id):
-            data = movies.find_one({"_id":ObjectId(get_movie_id),"user_id":user_id},{"_id":0,"user_id":0}) # get movie details with given movie id
+    def show_movie(self):
+            data = movies.find_one({"_id":self.movie_id,"user_id":self.user_id}) # get movie details with given movie id
 
             if data:
                 liked = [] # store who liked the movie in the list
@@ -97,7 +97,7 @@ class movie_management():
                     },
                     {
                         "$match": {
-                            "movie_id":ObjectId(get_movie_id)
+                            "movie_id":self.movie_id
                         }
                     }
                 ]
@@ -119,17 +119,15 @@ class movie_management():
                     "likesCount":len(liked),
                     "dislikesCount":len(disliked)
                 }
-                return output # return all data in output variable
+                return json.dumps(output, default=serialize_objectid) # return all data in output variable
             else:
                 return "Not found"
 
     # show all movies function
-    def show_all_movies(self, get_user_id):
-
-        data = movies.find({"user_id":ObjectId(get_user_id)})
+    def show_all_movies(self):
+        data = movies.find({"user_id":self.user_id})
         data_list = [item for item in data]
         return json.dumps(data_list, default=serialize_objectid)
-
 
     def delete_movie(self,get_id):
         get_id = ObjectId(get_id) # getting the data and convert to object id.

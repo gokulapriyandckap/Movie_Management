@@ -48,7 +48,8 @@ def user_login():
 @jwt_required()
 def create_movie():
     request.json["user_id"] = ObjectId(get_jwt_identity()) # get user id from jwt token and add to the user data
-    return movie_object.create_movie(request.json) # call the create movie functon and passing the arguement is user_data
+    movie_obj = movie_management(updated_data=request.json)
+    return movie_obj.create_movie() # call the create movie functon and passing the arguement is user_data
 
 @app.route("/delete/<movie_id>",methods=["DELETE"])
 def delete_movie(movie_id):
@@ -62,15 +63,15 @@ def delete_all_movie():
 @app.route("/showmovie/<movie_id>",methods=["GET"])
 @jwt_required()
 def show_movie(movie_id):
-    get_user_id = ObjectId(get_jwt_identity())
-    return movie_object.show_movie(movie_id, get_user_id) # passing the arguement movie id into the show movie function
+    movie_obj = movie_management(movie_id,get_jwt_identity())
+    return movie_obj.show_movie() # passing the arguement movie id into the show movie function
 
 # show all movies route
 @app.route("/showmovie",methods=["GET"])
 @jwt_required()
 def show_all_movies():
-    user_id = get_jwt_identity()
-    return movie_object.show_all_movies(user_id)
+    movie_obj = movie_management(user_id=get_jwt_identity())
+    return movie_obj.show_all_movies()
 
 @app.route("/update_movie/<movie_id>", methods=["PUT"])
 @jwt_required()
