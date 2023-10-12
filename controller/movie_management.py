@@ -4,6 +4,7 @@ from main import *
 import json
 from bson import ObjectId, json_util
 
+
 # movie management class it includes crud
 class movie_management():
     def __init__(self,movie_id,user_id,updated_data):

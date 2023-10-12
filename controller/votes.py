@@ -1,5 +1,6 @@
 from main import *
 
+
 class Vote():
 
     def __init__(self,movie_id,vote,user_id):
