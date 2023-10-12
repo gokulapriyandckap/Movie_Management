@@ -7,7 +7,8 @@ from bson import ObjectId, json_util
 
 # movie management class it includes crud
 class movie_management():
-    def __init__(self,movie_id,user_id,updated_data):
+
+    def __init__(self, movie_id = None, user_id = None, updated_data = None):
         self.movie_id = ObjectId(movie_id)
         self.updated_data = updated_data
         self.user_id = ObjectId(user_id)
@@ -16,17 +17,14 @@ class movie_management():
         collection_name.insert_one(user_data)
 
     def delete_data(self,collection_name,data):
-        # delete_criteriea =  collection_name.find_one(data) # getting all the id data from the collection_name
-
-        # if delete_criteriea: # if Id match it will delete or it return the "Id doesn't match"
-        print(collection_name.delete_one(data))
-            # return "Movie deleted successfully"
-        # else:
-        #     return "Id doesn't match"
+        delete_single_movie = collection_name.delete_one(data).deleted_count
+        if delete_single_movie == 1:
+            return "Movie deleted successfully"
+        else:
+            return "Id doesn't match"
     def delete_all_data(self,collectection_name):
-        count = collectection_name.count_documents({})
-        if count > 0:
-            collectection_name.delete_many({})  # this is for delete all data in the collection_name
+        delete_multiple_movies = collectection_name.delete_many({}).deleted_count
+        if delete_multiple_movies > 0:
             return "all Movies Deleted Successfully!"
         else:
             return "Movie Collection is Already Empty"
@@ -62,18 +60,18 @@ class movie_management():
 
 
     # create new movie with validation
-    def create_movie(self, get_data):
-        get_serialize_data = self.serialize_data(get_data["movie_name"])
-        checking_data = self.check_data(movies, {"movie_name":get_serialize_data,"user_id":get_data["user_id"]})
+    def create_movie(self):
+        get_serialize_data = self.serialize_data(self.updated_data["movie_name"])
+        checking_data = self.check_data(movies, {"movie_name":get_serialize_data,"user_id":self.updated_data["user_id"]})
         if not checking_data:
-            get_data["movie_name"] = get_serialize_data
-            movies.insert_one(get_data)
+            self.updated_data["movie_name"] = get_serialize_data
+            movies.insert_one(self.updated_data)
             return "movie inserted successfully"
         else:
             return "movie already exists"
 
-    def show_movie(self, get_movie_id, user_id):
-            data = movies.find_one({"_id":ObjectId(get_movie_id),"user_id":user_id},{"_id":0,"user_id":0}) # get movie details with given movie id
+    def show_movie(self):
+            data = movies.find_one({"_id":self.movie_id,"user_id":self.user_id}) # get movie details with given movie id
 
             if data:
                 liked = [] # store who liked the movie in the list
@@ -99,7 +97,7 @@ class movie_management():
                     },
                     {
                         "$match": {
-                            "movie_id":ObjectId(get_movie_id)
+                            "movie_id":self.movie_id
                         }
                     }
                 ]
@@ -121,23 +119,15 @@ class movie_management():
                     "likesCount":len(liked),
                     "dislikesCount":len(disliked)
                 }
-                return output # return all data in output variable
+                return json.dumps(output, default=serialize_objectid) # return all data in output variable
             else:
                 return "Not found"
 
-    @staticmethod
-    def serialize_objectid(obj):
-        if isinstance(obj, ObjectId):
-            return str(obj)
-        raise TypeError(f"Object of type {type(obj)} is not JSON serializable")
-
     # show all movies function
-    def show_all_movies(self, get_user_id):
-
-        data = movies.find({"user_id":ObjectId(get_user_id)})
+    def show_all_movies(self):
+        data = movies.find({"user_id":self.user_id})
         data_list = [item for item in data]
-        return json.dumps(data_list, default=self.serialize_objectid)
-
+        return json.dumps(data_list, default=serialize_objectid)
 
     def delete_movie(self,get_id):
         get_id = ObjectId(get_id) # getting the data and convert to object id.
@@ -145,3 +135,11 @@ class movie_management():
 
     def delete_all_movie(self):
         return self.delete_all_data(movies)
+
+
+
+
+def serialize_objectid(obj):
+    if isinstance(obj, ObjectId):
+        return str(obj)
+    raise TypeError(f"Object of type {type(obj)} is not JSON serializable")
