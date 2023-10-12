@@ -89,6 +89,7 @@ def update_movie(movie_id):
 
 
 
+
 @app.route("/createvote/<movie_id>",methods=["POST"])
 @jwt_required()
 def like_movie(movie_id):
