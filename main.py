@@ -73,15 +73,19 @@ def show_all_movies():
     return movie_object.show_all_movies(user_id)
 
 @app.route("/update_movie/<movie_id>", methods=["PUT"])
+@jwt_required()
 def update_movie(movie_id):
     # getting the updated data from the request Json
+    user_id = get_jwt_identity()
     updated_data = {
                     "updated_movie_name" :request.json['movie_name'],
                     "updated_Duration" : request.json['Duration'],
-                    "updated_DirectorName" : request.json['DirectorName']
+                    "updated_DirectorName" : request.json['DirectorName'],
     }
 
-    return movie_object.update_movie(movie_id,updated_data) # sent the updated data to the update movie function in movie management class with movie user_id.
+    movie_object = movie_management(movie_id,user_id,updated_data)
+    return movie_object.update_movie() # sent the updated data to the update movie function in movie management class with movie user_id.
+
 
 
 
@@ -91,8 +95,8 @@ def update_movie(movie_id):
 def like_movie(movie_id):
     vote = request.json["vote"] # get the vote from request.
     user_id = get_jwt_identity()
-
-    return vote_object.vote_the_movie(movie_id,vote,user_id) # sent the given data to the vote the movie function.
+    vote_object = Vote(movie_id,vote,user_id)
+    return vote_object.vote_the_movie()
 
 @app.route("/delete_like/<movie_id>",methods=["DELETE"])
 @jwt_required()
@@ -103,5 +107,4 @@ if __name__ == "__main__":
     # Code inside this block will only run if the script is the main program
     # and not if it's imported as a module into another script.
     app.run(debug=True)
-
 
