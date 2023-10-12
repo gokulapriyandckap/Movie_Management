@@ -4,7 +4,6 @@ from main import *
 class login():
      def __init__(self,email,password):
          self.email = email
-         self.password = password
          self.password = hashlib.sha256(password.encode("utf-8")).hexdigest()
 
      def login_verfication(self):
