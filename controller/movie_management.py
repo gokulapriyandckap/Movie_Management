@@ -1,20 +1,18 @@
 # import Db_connection
+import General_Functions.General_functions
 from controller import DB_Connection
 from main import *
 import json
 from bson import ObjectId, json_util
+from General_Functions.General_functions import *
 
 
 # movie management class it includes crud
 class movie_management():
 
-    def __init__(self, movie_id = None, user_id = None, updated_data = None):
+    def __init__(self, movie_id = None, user_id = None):
         self.movie_id = ObjectId(movie_id)
-        self.updated_data = updated_data
         self.user_id = ObjectId(user_id)
-
-    def save_db(self,collection_name,user_data):
-        collection_name.insert_one(user_data)
 
     def delete_data(self,collection_name,data):
         delete_single_movie = collection_name.delete_one(data).deleted_count
@@ -29,40 +27,26 @@ class movie_management():
         else:
             return "Movie Collection is Already Empty"
 
-    # check the movie name is already exist or not
-    def serialize_data(self, check_data):
-        split_data = check_data.split()
-        add_space = " ".join(split_data)
-        validate_data = add_space.title()
-        return validate_data
+    def update_movie(self,updated_data):
+        updated_movieName = updated_data["updated_movie_name"] #get the updated movie name from updated data.
+        seraialize_movie_name =  serialize_data(updated_movieName) #sent the updated movie to serialize.
 
-    def check_data(self, collection_name, get_check_data):
-        return collection_name.find_one(get_check_data)
+        db_check = check_data(movies,{"movie_name":seraialize_movie_name,"user_id":self.user_id}) #check if the movie is already exists in db.
 
-    def update_movie(self):
-        updated_movieName = self.updated_data["updated_movie_name"]
-        seraialize_movie_name =  self.serialize_data(updated_movieName)
+        updated_Duration = updated_data["updated_Duration"] #get the updated Duration name from updated data.
+        updated_DirectorName = updated_data["updated_DirectorName"] #get the Updated Director Name name from updated data.
 
-        db_check = self.check_data(movies,{"movie_name":seraialize_movie_name,"user_id":self.user_id})
-        updated_Duration = self.updated_data["updated_Duration"]
-        updated_DirectorName = self.updated_data["updated_DirectorName"]
+        updated_data =  {"movie_name":seraialize_movie_name,"Duration":updated_Duration,"DirectorName":updated_DirectorName} # Storing the all updated data in dict with respect keyas and values.
 
-        if not db_check:
-            movies.update_one({"_id": ObjectId(self.movie_id)},{"$set": {"movie_name": seraialize_movie_name,"Duration": updated_Duration,"DirectorName": updated_DirectorName}},upsert=False)
-            return "Movie Updated Successfully"
+        if not db_check: # if movie is not exist only  update the movie.
+           return update(collection_name=movies,criteria=ObjectId(self.movie_id),updated_data=updated_data) # calling the update function in general functin module with respective arguments.
         else:
-            if db_check["movie_name"] == seraialize_movie_name and db_check["Duration"] == updated_Duration and db_check["DirectorName"] == updated_DirectorName:
-                return "Please make it any changes"
-            else:
-                movies.update_one({"_id": ObjectId(self.movie_id)},{"$set": {"movie_name": seraialize_movie_name,"Duration": updated_Duration,"DirectorName": updated_DirectorName}},upsert=False)
-                return "movie updated successfully"
+            return update(collection_name=movies, criteria=ObjectId(self.movie_id), updated_data=updated_data)
 
-
-
-    # create new movie with validation
+    # create new movie with validation.
     def create_movie(self):
         get_serialize_data = self.serialize_data(self.updated_data["movie_name"])
-        checking_data = self.check_data(movies, {"movie_name":get_serialize_data,"user_id":self.updated_data["user_id"]})
+        checking_data = check_data(movies, {"movie_name":get_serialize_data,"user_id":self.updated_data["user_id"]})
         if not checking_data:
             self.updated_data["movie_name"] = get_serialize_data
             movies.insert_one(self.updated_data)
@@ -71,8 +55,7 @@ class movie_management():
             return "movie already exists"
 
     def show_movie(self):
-            data = movies.find_one({"_id":self.movie_id,"user_id":self.user_id}) # get movie details with given movie id
-
+            data = movies.find_one({"_id":self.movie_id,"user_id":self.user_id}) # get movie details with given movie id.
             if data:
                 liked = [] # store who liked the movie in the list
                 disliked = [] # store who dislike the movie in the list
@@ -136,7 +119,3 @@ class movie_management():
     def delete_all_movie(self):
         return self.delete_all_data(movies)
 
-def serialize_objectid(obj):
-    if isinstance(obj, ObjectId):
-        return str(obj)
-    raise TypeError(f"Object of type {type(obj)} is not JSON serializable")

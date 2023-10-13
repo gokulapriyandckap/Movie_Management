@@ -12,7 +12,6 @@ import datetime
 from bson import ObjectId
 import requests
 
-
 app = Flask(__name__)
 
 jwt = JWTManager(app)
@@ -84,8 +83,8 @@ def update_movie(movie_id):
                     "updated_DirectorName" : request.json['DirectorName'],
     }
 
-    movie_object = movie_management(movie_id,user_id,updated_data)
-    return movie_object.update_movie() # sent the updated data to the update movie function in movie management class with movie user_id.
+    movie_object = movie_management(movie_id,user_id)
+    return movie_object.update_movie(updated_data) # sent the updated data to the update movie function in movie management class with movie user_id.
 
 
 
@@ -96,15 +95,14 @@ def update_movie(movie_id):
 def like_movie(movie_id):
     vote = request.json["vote"] # get the vote from request.
     user_id = get_jwt_identity()
-    vote_object = Vote(movie_id,vote,user_id)
-    return vote_object.vote_the_movie()
+    vote_object = Vote(movie_id,user_id)
+    return vote_object.vote_the_movie(vote)
 
 @app.route('/update_vote/<movie_id>',methods=['PUT'])
 @jwt_required()
 def update_vote(movie_id):
     vote = request.json['vote']
     user_id = get_jwt_identity()
-
     return Vote().update_vote(movie_id,user_id,vote)
 @app.route("/delete_like/<movie_id>",methods=["DELETE"])
 @jwt_required()
