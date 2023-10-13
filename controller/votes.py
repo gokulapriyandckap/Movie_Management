@@ -22,7 +22,17 @@ class Vote():
         else:
             return "Movie not Found"
 
-    def remove_like(self): # getting movie_name and user_id
+    def update_vote(self,movie_id,user_id,vote):
+        filter_update_id = {"movie_id": ObjectId(movie_id), "user_id": ObjectId(user_id)}
+        update_data = { "$set": { "vote": vote } }
+
+        updated_vote = votes.update_one(filter_update_id, update_data).modified_count
+
+        if updated_vote == 1:
+            return "Vote updated successfully"
+        else:
+            return "Vote not found or no changes made"
+def remove_like(self): # getting movie_name and user_id
         if self.movie_id:
             delete_vote = votes.delete_one({"movie_id": self.movie_id, "user_id":self.user_id})  # delete document which movie_name and user_id are matched
             if delete_vote.deleted_count == 1:

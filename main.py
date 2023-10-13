@@ -99,6 +99,13 @@ def like_movie(movie_id):
     vote_object = Vote(movie_id,vote,user_id)
     return vote_object.vote_the_movie()
 
+@app.route('/update_vote/<movie_id>',methods=['PUT'])
+@jwt_required()
+def update_vote(movie_id):
+    vote = request.json['vote']
+    user_id = get_jwt_identity()
+
+    return Vote().update_vote(movie_id,user_id,vote)
 @app.route("/delete_like/<movie_id>",methods=["DELETE"])
 @jwt_required()
 def remove_like(movie_id):
