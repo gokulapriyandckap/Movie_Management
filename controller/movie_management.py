@@ -136,9 +136,6 @@ class movie_management():
     def delete_all_movie(self):
         return self.delete_all_data(movies)
 
-
-
-
 def serialize_objectid(obj):
     if isinstance(obj, ObjectId):
         return str(obj)

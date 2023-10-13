@@ -10,6 +10,7 @@ class Vote():
 
     def vote_the_movie(self):
         movie = movies.find_one({"_id": self.movie_id}) #checking if the movie is already exists.
+        print(movie,(self.movie_id))
 
         if movie:  # if given movie is in the movies collection then only we can vote or else error will occurs.
             unique_movie = votes.find_one({"movie_id": self.movie_id }) # checking if the movie is already exists in likes collection.
