@@ -22,8 +22,8 @@ class movie_management():
             return "Movie deleted successfully"
         else:
             return "Id doesn't match"
-    def delete_all_data(self,collectection_name):
-        delete_multiple_movies = collectection_name.delete_many({}).deleted_count
+    def delete_all_data(self,collectection_name,data):
+        delete_multiple_movies = collectection_name.delete_many(data).deleted_count
         if delete_multiple_movies > 0:
             return "all Movies Deleted Successfully!"
         else:
@@ -129,12 +129,14 @@ class movie_management():
         data_list = [item for item in data]
         return json.dumps(data_list, default=serialize_objectid)
 
-    def delete_movie(self,get_id):
+    def delete_movie(self,get_id,user_id):
         get_id = ObjectId(get_id) # getting the data and convert to object id.
-        return self.delete_data(movies,{"_id":get_id})
+        user_id = ObjectId(user_id)
+        return self.delete_data(movies,{"_id":get_id,"user_id":user_id})
 
-    def delete_all_movie(self):
-        return self.delete_all_data(movies)
+    def delete_all_movie(self,user_id):
+        user_id = ObjectId(user_id)
+        return self.delete_all_data(movies,{"user_id":user_id})
 
 
 

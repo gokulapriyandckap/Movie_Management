@@ -22,9 +22,9 @@ class Vote():
         else:
             return "Movie not Found"
 
-    def update_vote(self,movie_id,user_id,vote):
-        filter_update_id = {"movie_id": ObjectId(movie_id), "user_id": ObjectId(user_id)}
-        update_data = { "$set": { "vote": vote } }
+    def update_vote(self):
+        filter_update_id = {"movie_id": self.movie_id, "user_id": self.user_id}
+        update_data = { "$set": { "vote": self.vote } }
 
         updated_vote = votes.update_one(filter_update_id, update_data).modified_count
 

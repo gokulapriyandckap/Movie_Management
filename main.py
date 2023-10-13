@@ -52,12 +52,16 @@ def create_movie():
     return movie_obj.create_movie() # call the create movie functon and passing the arguement is user_data
 
 @app.route("/delete/<movie_id>",methods=["DELETE"])
+@jwt_required()
 def delete_movie(movie_id):
-    return movie_management().delete_movie(movie_id) # returing to the movie management.py
+    user_id = get_jwt_identity()
+    return movie_management().delete_movie(movie_id,user_id) # returing to the movie management.py
 
 @app.route("/delete_all_data",methods = ["DELETE"])
+@jwt_required()
 def delete_all_movie():
-    return movie_management().delete_all_movie()
+    user_id = get_jwt_identity()
+    return movie_management().delete_all_movie(user_id)
 
 # show single movie route
 @app.route("/showmovie/<movie_id>",methods=["GET"])
@@ -104,8 +108,8 @@ def like_movie(movie_id):
 def update_vote(movie_id):
     vote = request.json['vote']
     user_id = get_jwt_identity()
-
-    return Vote().update_vote(movie_id,user_id,vote)
+    vote_object = Vote(movie_id,vote,user_id)
+    return vote_object.update_vote()
 @app.route("/delete_like/<movie_id>",methods=["DELETE"])
 @jwt_required()
 def remove_like(movie_id):
