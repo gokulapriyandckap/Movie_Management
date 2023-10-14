@@ -5,18 +5,21 @@ class Vote():
         self.user_id = ObjectId(user_id)
 
     def vote_the_movie(self,vote):
-        movie = movies.find_one({"_id": self.movie_id}) #checking if the movie is already exists.
+        # movie = movies.find_one({"_id": self.movie_id}) #checking if the movie is already exists.
+        movie = check_data(movies,{"_id": self.movie_id})
 
         if movie:  # if given movie is in the movies collection then only we can vote or else error will occurs.
-            unique_movie = votes.find_one({"movie_id": self.movie_id }) # checking if the movie is already exists in likes collection.
+            unique_movie  = check_data(votes,{"movie_id": self.movie_id }) # checking if the movie is already exists in likes collection.
             if not unique_movie:
                 vote_data = {"movie_id":self.movie_id,"vote":vote,"user_id":self.user_id}
-                votes.insert_one(vote_data)
-                return "Vote inserted Succssfully"
+                # votes.insert_one(vote_data)
+                create(votes,vote_data)
+                return response_data(message="Voted Successfully",success=True)
             else:
-                return "Already Voted"
+                return response_data(message="Already Voted", success=False)
+
         else:
-            return "Movie not Found"
+            return response_data(message="Movie Not Found Voted", success=False)
 
     def update_vote(self,movie_id,user_id,vote):
         filter_update_id = {"movie_id": ObjectId(movie_id), "user_id": ObjectId(user_id)}
@@ -30,7 +33,7 @@ class Vote():
             return "Vote not found or no changes made"
     def remove_like(self): # getting movie_name and user_id
         if self.movie_id:
-            delete_vote = votes.delete_one({"movie_id": self.movie_id, "user_id":self.user_id})  # delete document which movie_name and user_id are matched
+            delete_vote = votes.delete_one({"movie_id": self.movie_id, "user_id":self.user_id})  # Delete document which movie_name and user_id are matched
             if delete_vote.deleted_count == 1:
                 return "Vote deleted successfully"
             else:

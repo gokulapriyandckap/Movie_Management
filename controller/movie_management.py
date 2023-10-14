@@ -38,10 +38,12 @@ class movie_management():
 
         updated_data =  {"movie_name":seraialize_movie_name,"Duration":updated_Duration,"DirectorName":updated_DirectorName} # Storing the all updated data in dict with respect keyas and values.
 
-        if not db_check: # if movie is not exist only  update the movie.
-           return update(collection_name=movies,criteria=ObjectId(self.movie_id),updated_data=updated_data) # calling the update function in general functin module with respective arguments.
+        if db_check: # if movie is not exist only  update the movie.
+            update(collection_name=movies,criteria=ObjectId(self.movie_id),updated_data=updated_data) # calling the update function in general functin module with respective arguments.
+            return response_data(message="Movie Updated Successfully",success=True)
         else:
-            return update(collection_name=movies, criteria=ObjectId(self.movie_id), updated_data=updated_data)
+            update(collection_name=movies, criteria=ObjectId(self.movie_id), updated_data=updated_data)
+            return response_data(message="Movie Updated Successfully",success=True)
 
     # create new movie with validation.
     def create_movie(self):
