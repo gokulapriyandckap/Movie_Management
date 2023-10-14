@@ -20,7 +20,7 @@ app.config["JWT_ACCESS_TOKEN_EXPIRES"] = datetime.timedelta(days=1)
 
 @app.route("/",methods = ["GET","POST"])
 def register():
-    return "hello"
+    return request.args.to_dict()
 
 # This route is used to Create the register.
 @app.route("/register", methods=["POST"])

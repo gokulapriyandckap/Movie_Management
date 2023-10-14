@@ -15,8 +15,8 @@ class movie_management():
         self.user_id = ObjectId(user_id)
 
     def delete_data(self,collection_name,data):
-        delete_single_movie = collection_name.delete_one(data).deleted_count
-        if delete_single_movie == 1:
+        delete_single_movie = collection_name.delete_one(data)
+        if delete_single_movie.deleted_count == 1:
             return "Movie deleted successfully"
         else:
             return "Id doesn't match"
@@ -124,5 +124,16 @@ class movie_management():
         return self.delete_all_data(movies,{"user_id":user_id})
 
     def search_movies(self,search_info):
-        results = movies.find({"$text": {"$search": search_info}},{"_id":0})
+        # results = movies.find({"$text": {"$search": search_info}},{"_id":0})
+        # return list(results)
+
+        query = {
+            "$or": [
+                {"movie_name": {"$regex": search_info}},
+                {"Director": {"$regex": search_info}}
+            ]
+        }
+
+        results = movies.find(query,{"_id":0})
         return list(results)
+
