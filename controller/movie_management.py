@@ -123,3 +123,6 @@ class movie_management():
         user_id = ObjectId(user_id)
         return self.delete_all_data(movies,{"user_id":user_id})
 
+    def search_movies(self,search_info):
+        results = movies.find({"$text": {"$search": search_info}},{"_id":0})
+        return list(results)

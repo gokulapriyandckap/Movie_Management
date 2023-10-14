@@ -26,8 +26,13 @@ def update(collection_name,criteria,updated_data): # Updating the  given data fo
     return response_data(message="Movie Updated Successfully",success=True)
 
 
-def delete():
-    pass
+def delete(collection_name, get_unique_data):
+    response = collection_name.delete_one(get_unique_data)
+    return response
+
+def delete_all(collection_name, get_unique_data):
+    response = collection_name.delete_many(get_unique_data)
+    return response
 
 
 

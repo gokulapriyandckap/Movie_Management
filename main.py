@@ -108,12 +108,18 @@ def update_vote(movie_id):
     vote = request.json['vote']
     user_id = get_jwt_identity()
 
-    return Vote().update_vote(movie_id,user_id,vote)
+    vote_object = Vote(movie_id,user_id)
+    return vote_object.update_vote(vote)
 @app.route("/delete_like/<movie_id>",methods=["DELETE"])
 @jwt_required()
 def remove_like(movie_id):
      vote_obj = Vote(movie_id=movie_id, user_id=get_jwt_identity())
      return vote_obj.remove_like() # passing two arguements like movie_name and user_id
+
+@app.route('/search_movies',methods=["GET"])
+def search():
+    search = request.json['search_info']
+    return movie_management().search_movies(search)
 
 if __name__ == "__main__":
     # Code inside this block will only run if the script is the main program
