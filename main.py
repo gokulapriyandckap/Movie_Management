@@ -47,8 +47,8 @@ def user_login():
 @jwt_required()
 def create_movie():
     request.json["user_id"] = ObjectId(get_jwt_identity()) # get user id from jwt token and add to the user data
-    movie_obj = movie_management(updated_data=request.json)
-    return movie_obj.create_movie() # call the create movie functon and passing the arguement is user_data
+    movie_obj = movie_management()
+    return movie_obj.create_movie(request.json) # call the create movie functon and passing the arguement is user_data
 
 @app.route("/delete/<movie_id>",methods=["DELETE"])
 @jwt_required()
