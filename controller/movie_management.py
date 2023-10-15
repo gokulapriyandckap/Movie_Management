@@ -142,3 +142,8 @@ class movie_management():
         results = movies.find(query,{"_id":0})
         return list(results)
 
+
+    def check_filter(self, args):
+        args["user_id"] = self.user_id
+        data = movies.find(args)
+        return json_util.dumps(data)

@@ -91,9 +91,6 @@ def update_movie(movie_id):
     return movie_object.update_movie(updated_data) # sent the updated data to the update movie function in movie management class with movie user_id.
 
 
-
-
-
 @app.route("/createvote/<movie_id>",methods=["POST"])
 @jwt_required()
 def like_movie(movie_id):
@@ -120,6 +117,15 @@ def remove_like(movie_id):
 def search():
     search = request.json['search_info']
     return movie_management().search_movies(search)
+
+
+
+@app.route("/checkfilter",methods=["GET"])
+@jwt_required()
+def check_filter():
+    args = request.args.to_dict()
+    move_obj = movie_management(user_id=get_jwt_identity())
+    return move_obj.check_filter(args)
 
 if __name__ == "__main__":
     # Code inside this block will only run if the script is the main program
