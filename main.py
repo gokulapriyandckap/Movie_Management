@@ -5,6 +5,7 @@ from flask import request
 from controller import signup #Imported  the signup Module from controller Directory.
 from controller.movie_management import *
 from controller.votes import *
+from pagination.pagination import *
 import hashlib # to hash the password
 import re # regex
 from flask_jwt_extended import create_access_token, jwt_required, JWTManager, get_jwt_identity
@@ -73,8 +74,10 @@ def show_movie(movie_id):
 @app.route("/showmovie",methods=["GET"])
 @jwt_required()
 def show_all_movies():
+    limit = request.args.get('limit')
+    page = request.args.get('page')
     movie_obj = movie_management(user_id=get_jwt_identity())
-    return movie_obj.show_all_movies()
+    return movie_obj.show_all_movies(limit, page)
 
 @app.route("/update_movie/<movie_id>", methods=["PUT"])
 @jwt_required()
@@ -126,6 +129,8 @@ def check_filter():
     args = request.args.to_dict()
     move_obj = movie_management(user_id=get_jwt_identity())
     return move_obj.check_filter(args)
+
+
 
 if __name__ == "__main__":
     # Code inside this block will only run if the script is the main program

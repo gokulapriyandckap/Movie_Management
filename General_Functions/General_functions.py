@@ -9,6 +9,21 @@ def response_data(data= None, message = None, success= None): #This function is 
     }
     return jsonify(result)
 
+
+def pagination_response_date(data= None,message = None,next = None,page = None,pages = None,prev = None,status = None,success = None,total = None,total_records= None):
+    return {
+        "data" : data,
+        "message" :message,
+        "next" : next,
+        "page" : page,
+        "pages" : pages,
+        "prev" : prev,
+        "status" : status,
+        "success" : success,
+        "total" : total,
+        "total_records" : total_records
+    }
+
 def serialize_data(check_data): # Serialize the given data.
     split_data = check_data.split()
     add_space = " ".join(split_data)

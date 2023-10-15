@@ -5,6 +5,7 @@ from main import *
 import json
 from bson import ObjectId, json_util
 from General_Functions.General_functions import *
+from pagination.pagination import *
 
 
 # movie management class it includes crud
@@ -112,7 +113,11 @@ class movie_management():
                 return response_data(message="Movie not found", success=False)
 
     # show all movies function
-    def show_all_movies(self):
+    def show_all_movies(self,limit,page):
+        criteria = {"limit":limit,"page":page}
+        # return criteria
+        pagination_object = Pagination(limit, page)
+        return pagination_object.data()
         data = list(movies.find({"user_id":self.user_id}))
         for item in data:
             if '_id' in item:
