@@ -12,7 +12,7 @@ class movie_management():
 
     def __init__(self, movie_id = None, user_id = None):
         self.movie_id = ObjectId(movie_id)
-        self.user_id = ObjectId(user_id)
+        self.user_id = user_id
 
     def delete_data(self,collection_name,data):
         delete_single_movie = collection_name.delete_one(data)
@@ -58,7 +58,7 @@ class movie_management():
             return response_data(message="movie name already exists", success=False)
 
     def show_movie(self):
-            data = movies.find_one({"_id":self.movie_id,"user_id":self.user_id}) # get movie details with given movie id.
+            data = movies.find_one({"_id":self.movie_id, "user_id":"6526224cf548ea175603a826"}) # get movie details with given movie id.
             if data:
                 liked = [] # store who liked the movie in the list
                 disliked = [] # store who dislike the movie in the list
@@ -105,16 +105,19 @@ class movie_management():
                     "likesCount":len(liked),
                     "dislikesCount":len(disliked)
                 }
-                return read(json_util.dumps(output)) # return all data in output variable
+                data['_id'] = str(data['_id'])
+                return read(output) # return all data in output variable
 
             else:
                 return response_data(message="Movie not found", success=False)
 
     # show all movies function
     def show_all_movies(self):
-        data = movies.find({"user_id":self.user_id})
-        data_list = [item for item in data]
-        return read(json_util.dumps(data_list))
+        data = list(movies.find({"user_id":self.user_id}))
+        for item in data:
+            if '_id' in item:
+                item['_id'] = str(item['_id'])
+        return read(data)
 
     def delete_movie(self,get_id,user_id):
         get_id = ObjectId(get_id) # getting the data and convert to object id.
