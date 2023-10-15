@@ -1,11 +1,13 @@
+from flask import jsonify
 from bson import json_util
 def response_data(data= None, message = None, success= None): #This function is used to return the response message and data.
-   result =  {
+
+    result =  {
        "data" : data,
        "message" : message,
        "success" : success
-   }
-   return result
+    }
+    return jsonify(result)
 
 def serialize_data(check_data): # Serialize the given data.
     split_data = check_data.split()
