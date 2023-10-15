@@ -1,5 +1,6 @@
 from main import *
 from General_Functions.General_functions import *
+from bson import json_util,ObjectId
 
 class Pagination:
     def __init__(self,limit,page):
@@ -23,7 +24,7 @@ class Pagination:
         pages = [i for i in range(1, total_no_pages()+1)] # after getting the how many pages it will store in the list by separate value. ex: no.of.pages = 3. in this list store like this = [1,2,3]
 
 
-        items = movies.find().skip(skip).limit(self.items_per_page) # This query fetching the movies with given limit and given page.
+        items = list(movies.find().skip(skip).limit(self.items_per_page)) # This query fetching the movies with given limit and given page.
 
         all_items = [] # after getting the all movies. The movies stored in this list by following for loop.
         for item in items:
