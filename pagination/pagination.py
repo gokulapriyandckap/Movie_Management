@@ -26,11 +26,10 @@ class Pagination:
 
         items = list(movies.find().skip(skip).limit(self.items_per_page)) # This query fetching the movies with given limit and given page.
 
-        all_items = [] # after getting the all movies. The movies stored in this list by following for loop.
         for item in items:
-            all_items.append({"movie_name": item["movie_name"], "Director_name": item["DirectorName"]})
+            item["_id"] = str(item["_id"])
 
         # after getting the all elements calling the pagination_response_data function by respective arguments.
-        return  pagination_response_date(data=all_items,message="Movies Listed successfully", next=self.page + 1,page=self.page, pages=pages, prev=self.page - 1, status=200,success=True, total=total_no_pages(), total_records=total_movies)
+        return  pagination_response_date(data=items,message="Movies Listed successfully", next=self.page + 1,page=self.page, pages=pages, prev=self.page - 1, status=200,success=True, total=total_no_pages(), total_records=total_movies)
 
 
