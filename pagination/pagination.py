@@ -1,6 +1,6 @@
 from main import *
 from General_Functions.General_functions import *
-# import requests
+
 
 class Pagination:
     def __init__(self,limit,page):
@@ -25,6 +25,7 @@ class Pagination:
 
 
         items = list(movies.find().skip(skip).limit(self.items_per_page)) # This query fetching the movies with given limit and given page.
+        
         for item in items:
             item["_id"] = str(item["_id"])
             item["user_id"] = str (item["user_id"])
