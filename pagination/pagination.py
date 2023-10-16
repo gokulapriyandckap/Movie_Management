@@ -3,10 +3,9 @@ from General_Functions.General_functions import *
 
 
 class Pagination:
-    def __init__(self,limit,page):
-        self.limit = int(limit)
-        self.page = int(page)
-        # self.items_per_page = 4
+    def __init__(self,crtieria):
+        self.limit = int(crtieria["limit"])
+        self.page = int(crtieria["page"])
 
     def data(self): # this function decribes that the feth the data with the criterira pf limit and pages.
 
@@ -31,6 +30,6 @@ class Pagination:
         for item in items:
             item["_id"] = str(item["_id"])
             # item["user_id"] = str (item["user_id"])
-        return items
+
         # after getting the all elements calling the pagination_response_data function by respective arguments.
         return  pagination_response_date(data=items,message="Movies Listed successfully", next=self.page + 1,page=self.page, pages=pages, prev=self.page - 1, status=200,success=True, total=total_no_pages(), total_records=total_movies)
