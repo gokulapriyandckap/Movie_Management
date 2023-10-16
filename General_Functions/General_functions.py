@@ -48,6 +48,8 @@ def delete(collection_name, get_unique_data):
     response = collection_name.delete_one(get_unique_data)
     return response
 
+def data_type_change(get_data):
+    return json_util.dumps(len(get_data))
 
 def delete_all(collection_name, get_unique_data):
     response = collection_name.delete_many(get_unique_data)

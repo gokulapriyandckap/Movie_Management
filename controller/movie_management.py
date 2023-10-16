@@ -6,6 +6,7 @@ import json
 from bson import ObjectId, json_util
 from General_Functions.General_functions import *
 from pagination.pagination import *
+from Filter.filter import *
 
 
 # movie management class it includes crud
@@ -60,6 +61,7 @@ class movie_management():
 
     def show_movie(self):
             data = movies.find_one({"_id":self.movie_id, "user_id":"6526224cf548ea175603a826"}) # get movie details with given movie id.
+            return data_type_change(data)
             if data:
                 liked = [] # store who liked the movie in the list
                 disliked = [] # store who dislike the movie in the list
@@ -113,11 +115,15 @@ class movie_management():
                 return response_data(message="Movie not found", success=False)
 
     # show all movies function
-    def show_all_movies(self,limit,page):
-        criteria = {"limit":limit,"page":page}
+    def show_all_movies(self, get_args):
+        criteria = {"limit":get_args["limit"],"page":get_args["page"]}
         # return criteria
-        pagination_object = Pagination(limit, page)
+        pagination_object = Pagination(get_args)
         return pagination_object.data()
+
+        filter_obj = filter(self.user_id)
+        return filter_obj.check_filter(get_args)
+
         data = list(movies.find({"user_id":self.user_id}))
         for item in data:
             if '_id' in item:
@@ -148,7 +154,3 @@ class movie_management():
         return list(results)
 
 
-    def check_filter(self, args):
-        args["user_id"] = self.user_id
-        data = movies.find(args)
-        return json_util.dumps(data)
