@@ -60,8 +60,7 @@ class movie_management():
             return response_data(message="movie name already exists", success=False)
 
     def show_movie(self):
-            data = movies.find_one({"_id":self.movie_id, "user_id":"6526224cf548ea175603a826"}) # get movie details with given movie id.
-            return data_type_change(data)
+            data = movies.find_one({"_id":self.movie_id, "user_id":self.user_id}) # get movie details with given movie id.
             if data:
                 liked = [] # store who liked the movie in the list
                 disliked = [] # store who dislike the movie in the list
@@ -100,6 +99,7 @@ class movie_management():
                     elif users['votes'] == 0:
                         disliked.append(users['details'][0]['name']) # if disliked members store into the disliked list
 
+                data = serialize_db_data(data)
                 # finally store the values into the output variable like liked members, dis liked members, likedCount, dislikes count and movie details
                 output = {
                     "movies_details":data,
@@ -108,7 +108,7 @@ class movie_management():
                     "likesCount":len(liked),
                     "dislikesCount":len(disliked)
                 }
-                data['_id'] = str(data['_id'])
+                # data['_id'] = str(data['_id'])
                 return read(output) # return all data in output variable
 
             else:
@@ -116,19 +116,18 @@ class movie_management():
 
     # show all movies function
     def show_all_movies(self, get_args):
-        criteria = {"limit":get_args["limit"],"page":get_args["page"]}
-        # return criteria
-        pagination_object = Pagination(get_args)
-        return pagination_object.data()
 
-        filter_obj = filter(self.user_id)
-        return filter_obj.check_filter(get_args)
+        filter_obj = filter(get_args) # passing the query params to filter class
+        filter_query = filter_obj.query_builder() # get validate query params from filter function
+        pagination_object = Pagination(get_args) # pass the limit and page arguements to paginate class
+        data = pagination_object.data(filter_query) # passing the validate query params to paginate function
 
-        data = list(movies.find({"user_id":self.user_id}))
-        for item in data:
-            if '_id' in item:
-                item['_id'] = str(item['_id'])
-        return read(data)
+        # filter_obj = filter(self.user_id)
+        # return filter_obj.check_filter(get_args)
+
+        # data = list(movies.find({"user_id":self.user_id}))
+        # data = serialize_db_data(data)
+        return read(data) # get data from paginate function and return the data to read function
 
     def delete_movie(self,get_id,user_id):
         get_id = ObjectId(get_id) # getting the data and convert to object id.

@@ -7,7 +7,7 @@ class Pagination:
         self.limit = int(crtieria["limit"])
         self.page = int(crtieria["page"])
 
-    def data(self): # this function decribes that the feth the data with the criterira pf limit and pages.
+    def data(self, get_filter_args): # this function decribes that the feth the data with the criterira pf limit and pages.
 
         skip = (self.page - 1) * self.limit # Calculate the number of items to skip in the pagination based on the current page and items per page.
 
@@ -24,7 +24,7 @@ class Pagination:
         pages = [i for i in range(1, total_no_pages()+1)] # after getting the how many pages it will store in the list by separate value. ex: no.of.pages = 3. in this list store like this = [1,2,3]
 
 
-        items = list(movies.find().skip(skip).limit(self.limit)) # This query fetching the movies with given limit and given page.
+        items = list(movies.find(get_filter_args).skip(skip).limit(self.limit)) # This query fetching the movies with given limit and given page.
 
         
         for item in items:

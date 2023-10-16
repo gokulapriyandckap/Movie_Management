@@ -30,6 +30,17 @@ def serialize_data(check_data): # Serialize the given data.
     validate_data = add_space.title()
     return validate_data
 
+def serialize_db_data(get_db_data):
+    if not get_db_data['_id']:
+        for item in get_db_data:
+            if '_id' in item:
+                item['_id'] = str(item['_id'])
+        return get_db_data
+    else:
+        get_db_data['_id'] = str(get_db_data['_id'])
+        return get_db_data
+
+
 def check_data(collection_name, get_check_data): # Checking if the data is in DB or not.
     return collection_name.find_one(get_check_data) # if data is in DB it will return data or else it will return None.
 
@@ -48,8 +59,6 @@ def delete(collection_name, get_unique_data):
     response = collection_name.delete_one(get_unique_data)
     return response
 
-def data_type_change(get_data):
-    return json_util.dumps(len(get_data))
 
 def delete_all(collection_name, get_unique_data):
     response = collection_name.delete_many(get_unique_data)
