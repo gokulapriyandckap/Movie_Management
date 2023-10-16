@@ -1,14 +1,13 @@
 from main import *
 from General_Functions.General_functions import *
-from Filter import filter, filter
-from bson import json_util,ObjectId
 
-class Pagination():
-    def __init__(self, get_args):
-        self.args = get_args
-        self.limit = int(get_args["limit"])
-        self.page = int(get_args["page"])
-        self.items_per_page = 4
+
+class Pagination:
+    def __init__(self,limit,page):
+        self.limit = int(limit)
+        self.page = int(page)
+        # self.items_per_page = 4
+
     def data(self): # this function decribes that the feth the data with the criterira pf limit and pages.
 
         skip = (self.page - 1) * self.items_per_page # Calculate the number of items to skip in the pagination based on the current page and items per page.
@@ -26,11 +25,10 @@ class Pagination():
         pages = [i for i in range(1, total_no_pages()+1)] # after getting the how many pages it will store in the list by separate value. ex: no.of.pages = 3. in this list store like this = [1,2,3]
 
         items = list(movies.find().skip(skip).limit(self.items_per_page)) # This query fetching the movies with given limit and given page.
-
+        
         for item in items:
             item["_id"] = str(item["_id"])
+            item["user_id"] = str (item["user_id"])
 
         # after getting the all elements calling the pagination_response_data function by respective arguments.
         return  pagination_response_date(data=items,message="Movies Listed successfully", next=self.page + 1,page=self.page, pages=pages, prev=self.page - 1, status=200,success=True, total=total_no_pages(), total_records=total_movies)
-
-

@@ -3,7 +3,11 @@
   <component name="Black">
     <option name="sdkName" value="Python 3.8 (Movie_Management)" />
   </component>
+<<<<<<< HEAD
   <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.8 (Movie_Management) (2)" project-jdk-type="Python SDK" />
+=======
+  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.8 (movie_env)" project-jdk-type="Python SDK" />
+>>>>>>> feature/pagination
   <component name="PyCharmProfessionalAdvertiser">
     <option name="shown" value="true" />
   </component>
