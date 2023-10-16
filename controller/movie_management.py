@@ -137,15 +137,17 @@ class movie_management():
         # results = movies.find({"$text": {"$search": search_info}},{"_id":0})
         # return list(results)
 
-        query = {
-            "$or": [
-                {"movie_name": {"$regex": search_info, "$options": "i"}},
-                {"Director": {"$regex": search_info, "$options": "i"}}
-            ]
-        }
+        # query = {
+        #     "$or": [
+        #         {"movie_name": {"$regex": search_info, "$options": "i"}},
+        #         {"Director": {"$regex": search_info, "$options": "i"}}
+        #     ]
+        # }
+        #
+        # results = movies.find(query,{"_id":0})
+        # return list(results)
 
-        results = movies.find(query,{"_id":0})
-        return list(results)
+        return search_info
 
 
     def check_filter(self, args):
