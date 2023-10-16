@@ -129,8 +129,8 @@ class movie_management():
 
         query = {
             "$or": [
-                {"movie_name": {"$regex": search_info}},
-                {"Director": {"$regex": search_info}}
+                {"movie_name": {"$regex": search_info, "$options": "i"}},
+                {"Director": {"$regex": search_info, "$options": "i"}}
             ]
         }
 
