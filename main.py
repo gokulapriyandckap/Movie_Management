@@ -116,7 +116,8 @@ def remove_like(movie_id):
 
 @app.route('/search_movies',methods=["GET"])
 def search():
-    search = request.json['search_info']
+    # search = request.json['search_info']
+    search = request.args['search_info']
     return movie_management().search_movies(search)
 
 
