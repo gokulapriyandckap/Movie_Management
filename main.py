@@ -74,10 +74,8 @@ def show_movie(movie_id):
 @app.route("/showmovie",methods=["GET"])
 @jwt_required()
 def show_all_movies():
-    limit = request.args.get('limit')
-    page = request.args.get('page')
     movie_obj = movie_management(user_id=get_jwt_identity())
-    return movie_obj.show_all_movies(limit, page)
+    return movie_obj.show_all_movies(request.args.to_dict())
 
 @app.route("/update_movie/<movie_id>", methods=["PUT"])
 @jwt_required()
