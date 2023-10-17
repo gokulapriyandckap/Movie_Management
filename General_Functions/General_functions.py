@@ -1,28 +1,10 @@
 from flask import jsonify
-from bson import json_util
-def response_data(data= None, message = None, success= None): #This function is used to return the response message and data.
-
-    result =  {
-       "data" : data,
-       "message" : message,
-       "success" : success
-    }
-    return jsonify(result)
-
-
-def pagination_response_date(data= None,message = None,next = None,page = None,pages = None,prev = None,status = None,success = None,total = None,total_records= None):
-    return {
-        "data" : data,
-        "message" :message,
-        "next" : next,
-        "page" : page,
-        "pages" : pages,
-        "prev" : prev,
-        "status" : status,
-        "success" : success,
-        "total" : total,
-        "total_records" : total_records
-    }
+from bson import json_util, ObjectId
+def response_data(**kwargs):
+    result_dict = {}
+    for key, value in kwargs.items():
+        result_dict[key] = value
+    return result_dict
 
 def serialize_data(check_data): # Serialize the given data.
     split_data = check_data.split()
@@ -31,14 +13,24 @@ def serialize_data(check_data): # Serialize the given data.
     return validate_data
 
 def serialize_db_data(get_db_data):
-    if not get_db_data['_id']:
-        for item in get_db_data:
-            if '_id' in item:
-                item['_id'] = str(item['_id'])
-        return get_db_data
-    else:
-        get_db_data['_id'] = str(get_db_data['_id'])
-        return get_db_data
+    return json_util.dumps(get_db_data)
+    # get_db_data[0]["_id"] = (get_db_data[0]["_id"])
+    # data_type = (str(get_db_data[0]["_id"]))
+    # data_type1 = (str(get_db_data[0]["user_id"]))
+    # get_db_data[0]["_id"] = data_type
+    # get_db_data[0]["user_id"] = data_type1
+    # return get_db_data[0]
+    # return json_util.dumps(get_db_data)
+    # get_db_data[0]['_id'] = str(get_db_data[0]['_id'])
+    # return json_util.dumps(get_db_data)
+    # if get_db_data['_id']:
+    # for item in get_db_data:
+    #     # if item['_id'] in item:
+    #         item['_id'] = str(item['_id'])
+    # return jsonify(get_db_data)
+    # else:
+    #     get_db_data['_id'] = str(get_db_data['_id'])
+    #     return jsonify(get_db_data)
 
 
 def check_data(collection_name, get_check_data): # Checking if the data is in DB or not.

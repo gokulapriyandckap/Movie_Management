@@ -117,17 +117,11 @@ class movie_management():
     # show all movies function
     def show_all_movies(self, get_args):
         filter_obj = filter(get_args) # passing the query params to filter class
-        filter_query = filter_obj.query_builder() # get validate query params from filter function
-        return filter_query
+        filter_query = filter_obj.filter_query_builder() # get validate query params from filter function
+        # print(filter_query)
         pagination_object = Pagination(get_args) # pass the limit and page arguements to paginate class
         data = pagination_object.data(filter_query) # passing the validate query params to paginate function
-
-        # filter_obj = filter(self.user_id)
-        # return filter_obj.check_filter(get_args)
-
-        # data = list(movies.find({"user_id":self.user_id}))
-        # data = serialize_db_data(data)
-        return read(data) # get data from paginate function and return the data to read function
+        return read(data)
 
     def delete_movie(self,get_id,user_id):
         get_id = ObjectId(get_id) # getting the data and convert to object id.
