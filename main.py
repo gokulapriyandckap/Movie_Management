@@ -21,7 +21,12 @@ app.config["JWT_ACCESS_TOKEN_EXPIRES"] = datetime.timedelta(days=1)
 
 @app.route("/",methods = ["GET","POST"])
 def register():
-    return request.args.to_dict()
+    data = movies.find().limit(1)
+    output = []
+    for items in data:
+        items['_id'] = str(items['_id'])
+        output.append(items)
+    return output
 
 # This route is used to Create the register.
 @app.route("/register", methods=["POST"])
