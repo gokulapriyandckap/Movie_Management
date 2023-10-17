@@ -1,9 +1,15 @@
 from flask import jsonify
 from bson import json_util, ObjectId
 def response_data(**kwargs):
+    data = [] # store serialize data store in the list
+    for datum in kwargs["data"]: # loop the data
+        datum['_id'] = str(datum['_id']) # change the ObjectId data type to string
+        data.append(datum)
+
     result_dict = {}
     for key, value in kwargs.items():
         result_dict[key] = value
+    result_dict["data"] = data # add data in result_dict
     return result_dict
 
 def serialize_data(check_data): # Serialize the given data.
@@ -11,31 +17,6 @@ def serialize_data(check_data): # Serialize the given data.
     add_space = " ".join(split_data)
     validate_data = add_space.title()
     return validate_data
-
-def serialize_db_data(get_db_data):
-    return json_util.dumps(get_db_data)
-
-    # get_db_data[0]["_id"] = (get_db_data[0]["_id"])
-    # data_type = (str(get_db_data[0]["_id"]))
-    # data_type1 = (str(get_db_data[0]["user_id"]))
-    # print(type(data_type))
-    # return get_db_data[0]
-
-    # get_db_data[0]["_id"] = data_type
-    # get_db_data[0]["user_id"] = data_type1
-    # return data_type
-    # return json_util.dumps(get_db_data)
-    # get_db_data[0]['_id'] = str(get_db_data[0]['_id'])
-    # return json_util.dumps(get_db_data)
-    # if get_db_data['_id']:
-    # for item in get_db_data:
-    #     # if item['_id'] in item:
-    #         item['_id'] = str(item['_id'])
-    # return jsonify(get_db_data)
-    # else:
-    #     get_db_data['_id'] = str(get_db_data['_id'])
-    #     return jsonify(get_db_data)
-
 
 def check_data(collection_name, get_check_data): # Checking if the data is in DB or not.
     return collection_name.find_one(get_check_data) # if data is in DB it will return data or else it will return None.
