@@ -8,6 +8,8 @@ class filter:
         self.args = args
 
     def query_builder(self):
-        self.args.pop("limit")
-        self.args.pop("page")
-        return self.args
+        filter_dict = {}
+        for key, value in self.args.items():
+            if key[0:6:] == "filter":
+                filter_dict.update({key[7::1]: value})
+        return filter_dict

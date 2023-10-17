@@ -116,9 +116,9 @@ class movie_management():
 
     # show all movies function
     def show_all_movies(self, get_args):
-
         filter_obj = filter(get_args) # passing the query params to filter class
         filter_query = filter_obj.query_builder() # get validate query params from filter function
+        return filter_query
         pagination_object = Pagination(get_args) # pass the limit and page arguements to paginate class
         data = pagination_object.data(filter_query) # passing the validate query params to paginate function
 
