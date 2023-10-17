@@ -11,8 +11,9 @@ class login():
          user_exist = users.find_one({"email":self.email})
          if user_exist:
              if user_exist["password"] == self.password:
-                 return create_access_token(identity=str(user_exist["_id"]))
+                 jwt_token = create_access_token(identity=str(user_exist["_id"]))
+                 return response_data(message="Loginned Succesfully!",data=jwt_token,success=True)
              else:
-                 return "password not match"
+                 return response_data(messgae="Password not match",success=False)
          else:
-             return "Email not found"
+             return response_data(messgae="Email not found", success=False)

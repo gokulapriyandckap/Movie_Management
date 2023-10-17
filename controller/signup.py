@@ -24,7 +24,7 @@ class User():
          elif not re.search(r'[a-z]', self.password):
              return response_data(message="Password must contain at least one uppercase letter",success=False)
          elif not re.search(r'[!@#$%^&*(),.?":{}|<>]', self.password):
-             return response_data(message="Password must contain at least one Special Character",success=False)
+             return response_data(message="Password must contain at least one Special Character ",success=False)
          elif not re.search(r'\d', self.password):
              return response_data(message="Password must contain at least one digit",success=False)
 

@@ -91,12 +91,12 @@ class movie_management():
                 ]
 
                 value = votes.aggregate(pipeline)
-
+                # return json_util.dumps(value)
                 # check who liked and disliked the movie and store in the list
                 for users in value:
-                    if users['votes'] == 1:
+                    if users['vote'] == 1:
                         liked.append(users['details'][0]['name']) # if liked members store into the liked list
-                    elif users['votes'] == 0:
+                    elif users['vote'] == 0:
                         disliked.append(users['details'][0]['name']) # if disliked members store into the disliked list
 
                 data = serialize_db_data(data)
@@ -121,8 +121,7 @@ class movie_management():
         # print(filter_query)
         pagination_object = Pagination(get_args) # pass the limit and page arguements to paginate class
         data = pagination_object.data(filter_query) # passing the validate query params to paginate function
-        return read(data)
-
+        return data
     def delete_movie(self,get_id,user_id):
         get_id = ObjectId(get_id) # getting the data and convert to object id.
         user_id = ObjectId(user_id)

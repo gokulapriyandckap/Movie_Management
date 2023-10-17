@@ -14,12 +14,16 @@ def serialize_data(check_data): # Serialize the given data.
 
 def serialize_db_data(get_db_data):
     return json_util.dumps(get_db_data)
+
     # get_db_data[0]["_id"] = (get_db_data[0]["_id"])
     # data_type = (str(get_db_data[0]["_id"]))
     # data_type1 = (str(get_db_data[0]["user_id"]))
+    # print(type(data_type))
+    # return get_db_data[0]
+
     # get_db_data[0]["_id"] = data_type
     # get_db_data[0]["user_id"] = data_type1
-    # return get_db_data[0]
+    # return data_type
     # return json_util.dumps(get_db_data)
     # get_db_data[0]['_id'] = str(get_db_data[0]['_id'])
     # return json_util.dumps(get_db_data)
