@@ -6,6 +6,7 @@ class filter:
 
     def __init__(self,args):
         self.args = args
+        self.query = {}
 
     def filter_query_builder(self):
         filter_dict = {}
@@ -15,3 +16,9 @@ class filter:
         criteria = [movies,filter_dict]
         # print(criteria)
         return criteria
+
+    def search_query_builder(self):
+        query = {"$or": [{"movie_name": {"$regex": search_info, "$options": "i"}},{"Director": {"$regex": search_info, "$options": "i"}}]}
+
+        results = movies.find(query,{"_id":0})
+        return list(results)
