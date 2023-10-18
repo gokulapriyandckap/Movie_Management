@@ -14,6 +14,6 @@ class login():
                  jwt_token = create_access_token(identity=str(user_exist["_id"]))
                  return response_data(message="Loginned Succesfully!",data=jwt_token,success=True)
              else:
-                 return response_data(messgae="Password not match",success=False)
+                 return response_data(message="Password not match",success=False)
          else:
-             return response_data(messgae="Email not found", success=False)
+             return response_data(message="Email not found", success=False)
