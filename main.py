@@ -1,4 +1,6 @@
 from flask import Flask,flash, request,jsonify
+from dotenv import load_dotenv
+from datetime import timedelta,datetime
 from controller import  login
 from controller.DB_Connection import *
 from flask import request
@@ -9,15 +11,23 @@ from pagination.pagination import *
 import hashlib # to hash the password
 import re # regex
 from flask_jwt_extended import create_access_token, jwt_required, JWTManager, get_jwt_identity
-import datetime
 from bson import ObjectId
 import requests
 
-app = Flask(__name__)
 
+# Load environment variables from .env
+load_dotenv()
+
+app = Flask(__name__)
 jwt = JWTManager(app)
-app.config["JWT_SECRET_KEY"] = "onetwothree"
-app.config["JWT_ACCESS_TOKEN_EXPIRES"] = datetime.timedelta(days=1)
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
+app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY')
+
+# Parse the JWT_ACCESS_TOKEN_EXPIRES from the environment variable
+jwt_expires_seconds = int(os.getenv('JWT_ACCESS_TOKEN_EXPIRES', 86400))
+jwt_expires_timedelta = timedelta(seconds=jwt_expires_seconds)
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = jwt_expires_timedelta
+
 
 @app.route("/",methods = ["GET","POST"])
 def register():

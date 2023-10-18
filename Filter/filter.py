@@ -13,5 +13,4 @@ class filter:
             if key[0:6:] == "filter":
                 filter_dict.update({key[7::1]: value})
         criteria = [movies,filter_dict]
-        # print(criteria)
         return criteria
