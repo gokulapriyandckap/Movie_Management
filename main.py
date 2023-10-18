@@ -34,12 +34,13 @@ app.config["JWT_ACCESS_TOKEN_EXPIRES"] = jwt_expires_timedelta
 
 @app.route("/",methods = ["GET","POST"])
 def register():
-    data = movies.find().limit(1)
-    output = []
-    for items in data:
-        items['_id'] = str(items['_id'])
-        output.append(items)
-    return output
+    data = list(movies.find().limit(1))
+    return response_data(data=data,message="fetch")
+    # output = []
+    # for items in data:
+    #     items['_id'] = str(items['_id'])
+    #     output.append(items)
+    # return output
 
 # This route is used to Create the register.
 @app.route("/register", methods=["POST"])
@@ -65,7 +66,7 @@ def user_login():
 @app.route("/createmovie",methods=["POST","GET"])
 @jwt_required()
 def create_movie():
-    request.json["user_id"] = ObjectId(get_jwt_identity()) # get user id from jwt token and add to the user data
+    request.json["user_id"] = get_jwt_identity() # get user id from jwt token and add to the user data
     movie_obj = movie_management()
     return movie_obj.create_movie(request.json) # call the create movie functon and passing the arguement is user_data
 
@@ -85,7 +86,7 @@ def delete_all_movie():
 @app.route("/showmovie/<movie_id>",methods=["GET"])
 @jwt_required()
 def show_movie(movie_id):
-    movie_obj = movie_management(movie_id,get_jwt_identity())
+    movie_obj = movie_management(movie_id,get_jwt_identity()["_id"])
     return movie_obj.show_movie() # passing the arguement movie id into the show movie function
 
 # show all movies route
