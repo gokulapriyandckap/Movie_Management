@@ -1,15 +1,23 @@
 from flask import jsonify
 from bson import json_util, ObjectId
 def response_data(**kwargs):
+    # return json_util.dumps(kwargs["data"])
     data = [] # store serialize data store in the list
-    for datum in kwargs["data"]: # loop the data
-        datum['_id'] = str(datum['_id']) # change the ObjectId data type to string
-        data.append(datum)
-
     result_dict = {}
-    for key, value in kwargs.items():
-        result_dict[key] = value
-    result_dict["data"] = data # add data in result_dict
+
+    if "data" in kwargs:
+        if "_id" in kwargs["data"][0]:
+            for datum in kwargs["data"]: # loop the data
+                datum['_id'] = str(datum['_id']) # change the ObjectId data type to string
+                data.append(datum)
+            result_dict["data"] = data # add data in result_dict
+        else:
+            for key, value in kwargs.items():
+                result_dict[key] = value
+        return result_dict
+    else:
+        for key, value in kwargs.items():
+            result_dict[key] = value
     return result_dict
 
 def serialize_data(check_data): # Serialize the given data.
