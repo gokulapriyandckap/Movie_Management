@@ -144,3 +144,6 @@ dmypy.json
 Swap Files
 *.swp
 celerybeat.pid
+
+#env file.
+.env
