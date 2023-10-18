@@ -86,7 +86,7 @@ def delete_all_movie():
 @app.route("/showmovie/<movie_id>",methods=["GET"])
 @jwt_required()
 def show_movie(movie_id):
-    movie_obj = movie_management(movie_id,get_jwt_identity()["_id"])
+    movie_obj = movie_management(movie_id,get_jwt_identity()["user_id"])
     return movie_obj.show_movie() # passing the arguement movie id into the show movie function
 
 # show all movies route
