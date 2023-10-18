@@ -91,7 +91,6 @@ class movie_management():
                 ]
 
                 value = votes.aggregate(pipeline)
-                # return json_util.dumps(value)
                 # check who liked and disliked the movie and store in the list
                 for users in value:
                     if users['vote'] == 1:
@@ -99,7 +98,6 @@ class movie_management():
                     elif users['vote'] == 0:
                         disliked.append(users['details'][0]['name']) # if disliked members store into the disliked list
 
-                data = serialize_db_data(data)
                 # finally store the values into the output variable like liked members, dis liked members, likedCount, dislikes count and movie details
                 output = {
                     "movies_details":data,
@@ -108,8 +106,7 @@ class movie_management():
                     "likesCount":len(liked),
                     "dislikesCount":len(disliked)
                 }
-                # data['_id'] = str(data['_id'])
-                return read(output) # return all data in output variable
+                return response_data(data=data,message="Movie Fetched Successfully!",success=True) # return all data in output variable
 
             else:
                 return response_data(message="Movie not found", success=False)

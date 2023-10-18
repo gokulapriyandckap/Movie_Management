@@ -12,7 +12,7 @@ class login():
          if user_exist:
              if user_exist["password"] == self.password:
                  jwt_token = create_access_token(
-                     identity={"_id": str(user_exist["_id"]), "email": user_exist["email"],
+                     identity={"user_id": str(user_exist["_id"]), "email": user_exist["email"],
                                "name": user_exist["name"]}
                  )
                  return response_data(message="Loginned Succesfully!",data=jwt_token,success=True)
