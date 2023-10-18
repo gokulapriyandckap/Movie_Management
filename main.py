@@ -65,41 +65,41 @@ def user_login():
 @app.route("/createmovie",methods=["POST","GET"])
 @jwt_required()
 def create_movie():
-    request.json["user_id"] = ObjectId(get_jwt_identity()) # get user id from jwt token and add to the user data
+    request.json["user_id"] = get_jwt_identity()["user_id"] # get user id from jwt token and add to the user data
     movie_obj = movie_management()
     return movie_obj.create_movie(request.json) # call the create movie functon and passing the arguement is user_data
 
 @app.route("/delete/<movie_id>",methods=["DELETE"])
 @jwt_required()
 def delete_movie(movie_id):
-    user_id = get_jwt_identity()
+    user_id = get_jwt_identity()["user_id"]
     return movie_management().delete_movie(movie_id,user_id) # returing to the movie management.py
 
 @app.route("/delete_all_data",methods = ["DELETE"])
 @jwt_required()
 def delete_all_movie():
-    user_id = get_jwt_identity()
+    user_id = get_jwt_identity()["user_id"]
     return movie_management().delete_all_movie(user_id)
 
 # show single movie route
 @app.route("/showmovie/<movie_id>",methods=["GET"])
 @jwt_required()
 def show_movie(movie_id):
-    movie_obj = movie_management(movie_id,get_jwt_identity())
+    movie_obj = movie_management(movie_id,get_jwt_identity()["user_id"])
     return movie_obj.show_movie() # passing the arguement movie id into the show movie function
 
 # show all movies route
 @app.route("/showmovie",methods=["GET"])
 @jwt_required()
 def show_all_movies():
-    movie_obj = movie_management(user_id=get_jwt_identity())
+    movie_obj = movie_management(user_id=get_jwt_identity()["user_id"])
     return movie_obj.show_all_movies(request.args.to_dict())
 
 @app.route("/update_movie/<movie_id>", methods=["PUT"])
 @jwt_required()
 def update_movie(movie_id):
     # getting the updated data from the request Json
-    user_id = get_jwt_identity()
+    user_id = get_jwt_identity()["user_id"]
     updated_data = {
                     "updated_movie_name" :request.json['movie_name'],
                     "updated_Duration" : request.json['Duration'],
@@ -114,7 +114,7 @@ def update_movie(movie_id):
 @jwt_required()
 def like_movie(movie_id):
     vote = request.json["vote"] # get the vote from request.
-    user_id = get_jwt_identity()
+    user_id = get_jwt_identity()["user_id"]
     vote_object = Vote(movie_id,user_id)
     return vote_object.vote_the_movie(vote)
 
@@ -122,14 +122,14 @@ def like_movie(movie_id):
 @jwt_required()
 def update_vote(movie_id):
     vote = request.json['vote']
-    user_id = get_jwt_identity()
+    user_id = get_jwt_identity()["user_id"]
 
     vote_object = Vote(movie_id,user_id)
     return vote_object.update_vote(vote)
 @app.route("/delete_like/<movie_id>",methods=["DELETE"])
 @jwt_required()
 def remove_like(movie_id):
-     vote_obj = Vote(movie_id=movie_id, user_id=get_jwt_identity())
+     vote_obj = Vote(movie_id=movie_id, user_id=get_jwt_identity()["user_id"])
      return vote_obj.remove_like() # passing two arguements like movie_name and user_id
 
 @app.route('/search_movies',methods=["GET"])
@@ -144,7 +144,7 @@ def search():
 @jwt_required()
 def check_filter():
     args = request.args.to_dict()
-    move_obj = movie_management(user_id=get_jwt_identity())
+    move_obj = movie_management(user_id=get_jwt_identity()["user_id"])
     return move_obj.check_filter(args)
 
 
