@@ -1,7 +1,7 @@
 from flask import jsonify
 from bson import json_util, ObjectId
 def response_data(**kwargs):
-    return json_util.dumps(kwargs["data"])
+    # return json_util.dumps(kwargs["data"])
     data = [] # store serialize data store in the list
     result_dict = {}
 
