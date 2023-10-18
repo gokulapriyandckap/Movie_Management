@@ -1,5 +1,6 @@
 from flask import Flask,flash, request,jsonify
 from dotenv import load_dotenv
+from flask_cors import CORS
 from datetime import timedelta,datetime
 from controller import  login
 from controller.DB_Connection import *
@@ -19,6 +20,8 @@ import requests
 load_dotenv()
 
 app = Flask(__name__)
+ # Allow CORS for all domains on all routes
+CORS(app)
 jwt = JWTManager(app)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY')
