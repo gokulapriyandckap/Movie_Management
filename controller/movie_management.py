@@ -49,10 +49,10 @@ class movie_management():
 
     # create new movie with validation.
     def create_movie(self,movie_data):
-        get_serialize_data = serialize_data(movie_data["movie_name"])
-        checking_data = check_data(movies, {"movie_name":get_serialize_data,"user_id":movie_data["user_id"]})
+        get_serialize_data = serialize_data(movie_data["name"])
+        checking_data = check_data(movies, {"name":get_serialize_data,"user_id":movie_data["user_id"]})
         if not checking_data:
-            movie_data["movie_name"] = get_serialize_data
+            movie_data["name"] = get_serialize_data
             create(collection_name=movies, get_data=movie_data)
             return response_data(message="Movie inserted successfully", success=True)
 

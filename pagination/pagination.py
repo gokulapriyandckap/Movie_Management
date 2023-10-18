@@ -22,7 +22,7 @@ class Pagination:
                 return ((total_movies // self.limit) + 1)
 
         pages = [i for i in range(1, total_no_pages()+1)] # after getting the how many pages it will store in the list by separate value. ex: no.of.pages = 3. in this list store like this = [1,2,3]
-        items = get_filter_args
+        items = get_filter_args.skip(skip).limit(self.limit)
 
         # return items
         if items:

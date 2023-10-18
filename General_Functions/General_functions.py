@@ -11,6 +11,10 @@ def response_data(**kwargs):
                 datum['_id'] = str(datum['_id']) # change the ObjectId data type to string
                 data.append(datum)
             result_dict["data"] = data # add data in result_dict
+            for key, value in kwargs.items():
+                if not key == "data" in kwargs:
+                    result_dict[key] = value
+            return result_dict
         else:
             for key, value in kwargs.items():
                 result_dict[key] = value
