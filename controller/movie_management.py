@@ -68,7 +68,7 @@ class movie_management():
             return response_data(message="movie name already exists", success=False)
 
     def show_movie(self):
-        data = list(movies.find({"_id":self.movie_id, "user_id":self.user_id}))
+        data = movies.find({"_id":self.movie_id, "user_id":self.user_id})
         if len(data) > 0:
             return response_data(data=data,message="movie fetched successfully",success=True)
         else:
@@ -131,7 +131,6 @@ class movie_management():
     def show_all_movies(self, get_args):
         filter_obj = filter(get_args,movies) # passing the query params to filter class
         filter_query = filter_obj.filter_query_builder() # get validate query params from filter function
-        # return filter_query
         pagination_object = Pagination(get_args) # pass the limit and page arguements to paginate class
         data = pagination_object.data(filter_query) # passing the validate query params to paginate function
         return data

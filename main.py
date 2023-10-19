@@ -34,13 +34,28 @@ app.config["JWT_ACCESS_TOKEN_EXPIRES"] = jwt_expires_timedelta
 
 @app.route("/",methods = ["GET","POST"])
 def register():
-    data = list(movies.find().limit(1))
-    return response_data(data=data,message="fetch")
-    # output = []
+    data = movies.find()
+
+    # return response_data(data=data,message="fetch")
+    # # output = []
+    # # for items in data:
+    # #     items['_id'] = str(items['_id'])
+    # #     output.append(items)
+    # # return output
+    #
+    # data = movies.find({})
+    # output_data = []
     # for items in data:
-    #     items['_id'] = str(items['_id'])
-    #     output.append(items)
-    # return output
+    #     items["_id"] = str(items["_id"])
+    #     output_data.append(items)
+    #
+    # return output_data
+    # if "_id" in data and isinstance(data["_id"], ObjectId):
+    #     data["_id"] = str(data["_id"])
+    # elif "_id" in data[0]:
+    #     return json_util.dumps(data)
+    # return data
+
 
 # This route is used to Create the register.
 @app.route("/register", methods=["POST"])

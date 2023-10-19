@@ -14,13 +14,11 @@ class filter:
             if key[0:6:] == "filter":
                 self.query.update({key[7::1]: value})
         criteria = self.collection_name.find(self.query)
-        # documents_count = self.collection_name.find(self.query).count()
-
-        # filtered_data = [criteria, documents_count]
+        self.search_query_builder()
         return criteria
 
     def search_query_builder(self):
-        query = {"$or":[{"movie_name": {"$regex": search_info, "$options": "i"}},{"Director": {"$regex": search_info, "$options": "i"}}]}
-
-        results = movies.find(query,{"_id":0})
-        return list(results)
+        query = {
+            "$or":[{"name": {"$regex": self.args["search"], "$options": "i"}},{"director_name": {"$regex": self.args["search"], "$options": "i"}}]
+        }
+        self.query.update(query)
