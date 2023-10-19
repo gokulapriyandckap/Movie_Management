@@ -1,17 +1,17 @@
 from main import *
 class Vote():
-    def __init__(self, movie_id = None, vote = None, user_id = None):
+    def __init__(self, movie_id = None,user_id = None):
         self.movie_id = ObjectId(movie_id)
-        self.user_id = ObjectId(user_id)
+        self.user_id = user_id
 
     def vote_the_movie(self,vote):
         # movie = movies.find_one({"_id": self.movie_id}) #checking if the movie is already exists.
         movie = check_data(movies,{"_id": self.movie_id})
 
         if movie:  # if given movie is in the movies collection then only we can vote or else error will occurs.
-            unique_movie  = check_data(votes,{"movie_id": self.movie_id }) # checking if the movie is already exists in likes collection.
+            unique_movie  = check_data(votes,{"movie_id": str(self.movie_id) }) # checking if the movie is already exists in likes collection.
             if not unique_movie:
-                vote_data = {"movie_id":self.movie_id,"vote":vote,"user_id":self.user_id}
+                vote_data = {"movie_id":str(self.movie_id),"vote":vote,"user_id":self.user_id}
                 # votes.insert_one(vote_data)
                 create(votes,vote_data)
                 return response_data(message="Voted Successfully",success=True)
@@ -19,7 +19,7 @@ class Vote():
                 return response_data(message="Already Voted", success=False)
 
         else:
-            return response_data(message="Movie Not Found Voted", success=False)
+            return response_data(message="Movie Not Found", success=False)
 
     def update_vote(self,vote):
         filter_update_id = {"movie_id": self.movie_id, "user_id": self.user_id}

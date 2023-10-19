@@ -14,6 +14,9 @@ class filter:
             if key[0:6:] == "filter":
                 self.query.update({key[7::1]: value})
         criteria = self.collection_name.find(self.query)
+        # documents_count = self.collection_name.find(self.query).count()
+
+        # filtered_data = [criteria, documents_count]
         return criteria
 
     def search_query_builder(self):

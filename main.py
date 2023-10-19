@@ -74,7 +74,8 @@ def create_movie():
 @jwt_required()
 def delete_movie(movie_id):
     user_id = get_jwt_identity()["user_id"]
-    return movie_management().delete_movie(movie_id,user_id) # returing to the movie management.py
+    movie_object = movie_management(movie_id,user_id)
+    return movie_object.delete_movie() # returing to the movie management.py
 
 @app.route("/delete_all_data",methods = ["DELETE"])
 @jwt_required()
@@ -102,9 +103,9 @@ def update_movie(movie_id):
     # getting the updated data from the request Json
     user_id = get_jwt_identity()["user_id"]
     updated_data = {
-                    "updated_movie_name" :request.json['movie_name'],
-                    "updated_Duration" : request.json['Duration'],
-                    "updated_DirectorName" : request.json['DirectorName'],
+                    "updated_movie_name" :request.json['name'],
+                    "updated_Duration" : request.json['duration'],
+                    "updated_DirectorName" : request.json['director_name'],
     }
 
     movie_object = movie_management(movie_id,user_id)

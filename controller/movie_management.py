@@ -17,35 +17,43 @@ class movie_management():
         self.user_id = user_id
 
     def delete_data(self,collection_name,data):
+        print(data)
         delete_single_movie = collection_name.delete_one(data)
+        print(delete_single_movie.deleted_count)
         if delete_single_movie.deleted_count == 1:
-            return "Movie deleted successfully"
+            return response_data(message="movie deleted successfully!",success=True)
         else:
-            return "Id doesn't match"
+            return response_data(message="movie not found!", success=False)
     def delete_all_data(self,collectection_name,data):
         delete_multiple_movies = collectection_name.delete_many(data).deleted_count
         if delete_multiple_movies > 0:
-            return "all Movies Deleted Successfully!"
+            return response_data(message="all movies deleted successfully!",success=True)
         else:
-            return "Movie Collection is Already Empty"
+            return response_data(message="your movie collection is already empty!",success=True)
 
     def update_movie(self,updated_data):
         updated_movieName = updated_data["updated_movie_name"] #get the updated movie name from updated data.
         seraialize_movie_name =  serialize_data(updated_movieName) #sent the updated movie to serialize.
 
-        db_check = check_data(movies,{"movie_name":seraialize_movie_name,"user_id":self.user_id}) #check if the movie is already exists in db.
+        db_check = check_data(movies,{"name":seraialize_movie_name,"user_id":self.user_id}) #check if the movie is already exists in db.
 
         updated_Duration = updated_data["updated_Duration"] #get the updated Duration name from updated data.
         updated_DirectorName = updated_data["updated_DirectorName"] #get the Updated Director Name name from updated data.
 
-        updated_data =  {"movie_name":seraialize_movie_name,"Duration":updated_Duration,"DirectorName":updated_DirectorName} # Storing the all updated data in dict with respect keyas and values.
+        updated_data =  {"name":seraialize_movie_name,"duration":updated_Duration,"director_name":updated_DirectorName} # Storing the all updated data in dict with respect keys and values.
 
         if db_check: # if movie is not exist only  update the movie.
-            update(collection_name=movies,criteria=ObjectId(self.movie_id),updated_data=updated_data) # calling the update function in general functin module with respective arguments.
-            return response_data(message="Movie Updated Successfully",success=True)
+           result =  update(collection_name=movies,criteria=ObjectId(self.movie_id),updated_data=updated_data) # calling the update function in general functin module with respective arguments.
+           # if result.modified_count > 0:
+           return response_data(message="movie updated successfully",success=True)
+           # else:
+           #     return response_data(message="movie already updated!",success=False)
         else:
-            update(collection_name=movies, criteria=ObjectId(self.movie_id), updated_data=updated_data)
-            return response_data(message="Movie Updated Successfully",success=True)
+            # result = update(collection_name=movies, criteria=ObjectId(self.movie_id), updated_data=updated_data)
+            # if result.modified_count > 0:
+            #     return response_data(message="movie updated successfully", success=True)
+            # else:
+             return response_data(message="movie not found!", success=False)
 
     # create new movie with validation.
     def create_movie(self,movie_data):
@@ -123,17 +131,14 @@ class movie_management():
     def show_all_movies(self, get_args):
         filter_obj = filter(get_args,movies) # passing the query params to filter class
         filter_query = filter_obj.filter_query_builder() # get validate query params from filter function
-        # print(filter_query)
+        # return filter_query
         pagination_object = Pagination(get_args) # pass the limit and page arguements to paginate class
         data = pagination_object.data(filter_query) # passing the validate query params to paginate function
         return data
-    def delete_movie(self,get_id,user_id):
-        get_id = ObjectId(get_id) # getting the data and convert to object id.
-        user_id = ObjectId(user_id)
-        return self.delete_data(movies,{"_id":get_id,"user_id":user_id})
+    def delete_movie(self):
+        return self.delete_data(movies,{"_id":self.movie_id,"user_id":self.user_id})
 
     def delete_all_movie(self,user_id):
-        user_id = ObjectId(user_id)
         return self.delete_all_data(movies,{"user_id":user_id})
 
     def search_movies(self,search_info):

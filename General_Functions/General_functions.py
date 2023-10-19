@@ -37,11 +37,12 @@ def create(collection_name, get_data):
     collection_name.insert_one(get_data)
 
 def read(get_data):
-    return response_data(data=get_data, message="data fetced successfully", success=True)
+    return response_data(data=get_data, message="data fetched successfully", success=True)
 
 def update(collection_name,criteria,updated_data): # Updating the  given data for given criteria.
-    collection_name.update_one({"_id": criteria}, {"$set": updated_data})
-    return response_data(message="Movie Updated Successfully",success=True)
+    result = collection_name.update_one({"_id": criteria}, {"$set": updated_data})
+    return result
+
 
 
 def delete(collection_name, get_unique_data):
