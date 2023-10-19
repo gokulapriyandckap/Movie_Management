@@ -7,7 +7,7 @@ class Pagination:
         self.limit = int(crtieria["limit"])
         self.page = int(crtieria["page"])
 
-    def data(self, get_filter_args): # this function decribes that the feth the data with the criterira pf limit and pages.
+    def data(self, get_filter_args, document_count): # this function decribes that the feth the data with the criterira pf limit and pages.
 
         skip = (self.page - 1) * self.limit # Calculate the number of items to skip in the pagination based on the current page and items per page.
 
