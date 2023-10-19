@@ -34,8 +34,8 @@ app.config["JWT_ACCESS_TOKEN_EXPIRES"] = jwt_expires_timedelta
 
 @app.route("/",methods = ["GET","POST"])
 def register():
-    data = movies.find()
-
+    data = movies.count_documents({"name":"Bigil"})
+    print(data)
     # return response_data(data=data,message="fetch")
     # # output = []
     # # for items in data:
