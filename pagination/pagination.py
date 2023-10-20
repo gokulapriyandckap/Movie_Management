@@ -12,7 +12,7 @@ class Pagination:
         skip = (self.page - 1) * self.limit # Calculate the number of items to skip in the pagination based on the current page and items per page.
 
         # Count the number of documents in the Movies Collection.
-        total_movies = movies.count_documents({})
+        total_movies = document_count
 
         # this function return the how many pages need for the all documents
         def total_no_pages():
