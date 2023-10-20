@@ -11,7 +11,7 @@ from controller.votes import *
 from pagination.pagination import *
 import hashlib # to hash the password
 import re # regex
-from flask_jwt_extended import create_access_token, jwt_required, JWTManager, get_jwt_identity
+from flask_jwt_extended import create_access_token, jwt_required, JWTManager, get_jwt_identity, create_refresh_token
 from bson import ObjectId
 import requests
 
@@ -34,8 +34,9 @@ app.config["JWT_ACCESS_TOKEN_EXPIRES"] = jwt_expires_timedelta
 
 @app.route("/",methods = ["GET","POST"])
 def register():
-    data = movies.count_documents({"name":"Bigil"})
-    print(data)
+    # data = movies.find_one({})
+    data = movies.find({})
+    return seiralize_db_data(data)
     # return response_data(data=data,message="fetch")
     # # output = []
     # # for items in data:
@@ -55,6 +56,7 @@ def register():
     # elif "_id" in data[0]:
     #     return json_util.dumps(data)
     # return data
+
 
 
 # This route is used to Create the register.

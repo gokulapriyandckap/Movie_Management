@@ -2,27 +2,39 @@ from flask import jsonify
 from bson import json_util, ObjectId
 def response_data(**kwargs):
     # return json_util.dumps(kwargs["data"])
-    data = [] # store serialize data store in the list
-    result_dict = {}
+    # data = [] # store serialize data store in the list
+    result_data = {}
 
-    if "data" in kwargs:
-        if "_id" in kwargs["data"][0]:
-            for datum in kwargs["data"]: # loop the data
-                datum['_id'] = str(datum['_id']) # change the ObjectId data type to string
-                data.append(datum)
-            result_dict["data"] = data # add data in result_dict
-            for key, value in kwargs.items():
-                if not key == "data" in kwargs:
-                    result_dict[key] = value
-            return result_dict
-        else:
-            for key, value in kwargs.items():
-                result_dict[key] = value
-        return result_dict
+    # if "data" in kwargs:
+    #     if "_id" in kwargs["data"][0]:
+    #         for datum in kwargs["data"]: # loop the data
+    #             datum['_id'] = str(datum['_id']) # change the ObjectId data type to string
+    #             data.append(datum)
+    #         result_dict["data"] = data # add data in result_dict
+    #         for key, value in kwargs.items():
+    #             if not key == "data" in kwargs:
+    #                 result_dict[key] = value
+    #         return result_dict
+    #     else:
+    #         for key, value in kwargs.items():
+    #             result_dict[key] = value
+    #     return result_dict
+    # else:
+    for key, value in kwargs.items():
+        result_data[key] = value
+    return result_data
+
+
+def seiralize_db_data(data):
+    list = []
+    if isinstance(data, dict):
+        data["_id"] = str(data["_id"])
+        return data
     else:
-        for key, value in kwargs.items():
-            result_dict[key] = value
-    return result_dict
+        for item in data:
+            item["_id"] = str(item["_id"])
+            list.append(item)
+        return list
 
 def serialize_data(check_data): # Serialize the given data.
     split_data = check_data.split()
