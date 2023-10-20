@@ -10,12 +10,13 @@ class filter:
         self.collection_name = collection_name
 
     def filter_query_builder(self):
+        self.search_query_builder()
         for key, value in self.args.items():
             if key[0:6:] == "filter":
                 self.query.update({key[7::1]: value})
+
         criteria = self.collection_name.find(self.query)
         count_documents = self.collection_name.count_documents(self.query)
-        self.search_query_builder()
         data_counts = [criteria, count_documents]
         return data_counts
 
