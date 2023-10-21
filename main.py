@@ -125,14 +125,9 @@ def show_my_movie():
 def update_movie(movie_id):
     # getting the updated data from the request Json
     user_id = get_jwt_identity()["user_id"]
-    updated_data = {
-                    "updated_movie_name" :request.json['name'],
-                    "updated_Duration" : request.json['duration'],
-                    "updated_DirectorName" : request.json['director_name'],
-    }
 
     movie_object = movie_management(movie_id,user_id)
-    return movie_object.update_movie(updated_data) # sent the updated data to the update movie function in movie management class with movie user_id.
+    return movie_object.update_movie(request.json) # sent the updated data to the update movie function in movie management class with movie user_id.
 
 
 @app.route("/createvote/<movie_id>",methods=["POST"])
@@ -172,6 +167,10 @@ def check_filter():
     move_obj = movie_management(user_id=get_jwt_identity()["user_id"])
     return move_obj.check_filter(args)
 
+@app.route("/logout",methods=["POST"])
+@jwt_required()
+def logout():
+    return get_jwt_identity()
 
 
 if __name__ == "__main__":
