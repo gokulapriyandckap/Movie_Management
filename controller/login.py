@@ -15,9 +15,8 @@ class login():
                      identity={"user_id": str(user_exist["_id"]), "email": user_exist["email"],
                                "name": user_exist["name"]}
                  )
-                 refresh_token = create_refresh_token(identity={"user_id": str(user_exist["_id"]), "email": user_exist["email"],
-                               "name": user_exist["name"]})
-                 return response_data(message="Loginned Succesfully!",data={"token":jwt_token,"refresh_token":refresh_token},success=True)
+
+                 return response_data(message="Loginned Succesfully!",data=jwt_token,success=True)
              else:
                  return response_data(message="Password not match",success=False)
          else:

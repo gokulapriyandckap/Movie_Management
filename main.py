@@ -11,7 +11,7 @@ from controller.votes import *
 from pagination.pagination import *
 import hashlib # to hash the password
 import re # regex
-from flask_jwt_extended import create_access_token, jwt_required, JWTManager, get_jwt_identity, create_refresh_token
+from flask_jwt_extended import create_access_token, jwt_required, JWTManager, get_jwt_identity
 from bson import ObjectId
 import requests
 
@@ -112,7 +112,13 @@ def show_movie(movie_id):
 @jwt_required()
 def show_all_movies():
     movie_obj = movie_management(user_id=get_jwt_identity()["user_id"])
-    return movie_obj.show_all_movies(request.args.to_dict())
+    return movie_obj.show_all_movies(request.args.to_dict(),get_access=False)
+
+@app.route("/showmovie/my_movie")
+@jwt_required()
+def show_my_movie():
+    movie_obj = movie_management(user_id=get_jwt_identity()["user_id"])
+    return movie_obj.show_all_movies(request.args.to_dict(),get_jwt_identity()["user_id"])
 
 @app.route("/update_movie/<movie_id>", methods=["PUT"])
 @jwt_required()

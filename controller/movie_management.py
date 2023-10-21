@@ -133,12 +133,13 @@ class movie_management():
             #     return response_data(message="Movie not found", success=False)
 
     # show all movies function
-    def show_all_movies(self, get_args):
-        filter_obj = filter(get_args,movies) # passing the query params to filter class
+    def show_all_movies(self, get_args,get_access):
+        filter_obj = filter(get_args,movies,get_access) # passing the query params to filter class
         filter_query = filter_obj.filter_query_builder() # get validate query params from filter function
         pagination_object = Pagination(get_args) # pass the limit and page arguements to paginate class
         data = pagination_object.data(filter_query[0],filter_query[1]) # passing the validate query params to paginate function
         return data
+
     def delete_movie(self):
         return self.delete_data(movies,{"_id":self.movie_id,"user_id":self.user_id})
 
