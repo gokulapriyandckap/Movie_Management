@@ -35,25 +35,13 @@ class movie_management():
         updated_movieName = updated_data["updated_movie_name"] #get the updated movie name from updated data.
         seraialize_movie_name =  serialize_data(updated_movieName) #sent the updated movie to serialize.
 
-        db_check = check_data(movies,{"name":seraialize_movie_name,"user_id":self.user_id}) #check if the movie is already exists in db.
+        check_access = movies.find({self.user_id,self.movie_id})
 
-        updated_Duration = updated_data["updated_Duration"] #get the updated Duration name from updated data.
-        updated_DirectorName = updated_data["updated_DirectorName"] #get the Updated Director Name name from updated data.
-
-        updated_data =  {"name":seraialize_movie_name,"duration":updated_Duration,"director_name":updated_DirectorName} # Storing the all updated data in dict with respect keys and values.
-
-        if db_check: # if movie is not exist only  update the movie.
-           result =  update(collection_name=movies,criteria=ObjectId(self.movie_id),updated_data=updated_data) # calling the update function in general functin module with respective arguments.
-           # if result.modified_count > 0:
-           return response_data(message="movie updated successfully",success=True)
-           # else:
-           #     return response_data(message="movie already updated!",success=False)
+        if check_access:
+            return "yes"
         else:
-            # result = update(collection_name=movies, criteria=ObjectId(self.movie_id), updated_data=updated_data)
-            # if result.modified_count > 0:
-            #     return response_data(message="movie updated successfully", success=True)
-            # else:
-             return response_data(message="movie not found!", success=False)
+            return "no"
+
 
     # create new movie with validation.
     def create_movie(self,movie_data):
