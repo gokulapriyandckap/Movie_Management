@@ -68,11 +68,16 @@ class movie_management():
             return response_data(message="movie name already exists", success=False)
 
     def show_movie(self):
-        data = movies.find({"_id":self.movie_id, "user_id":self.user_id})
-        if len(data) > 0:
-            return response_data(data=data,message="movie fetched successfully",success=True)
+        data = movies.find_one({"_id":self.movie_id, "user_id":self.user_id})
+        if data:
+            data = seiralize_db_data(data)
+            return response_data(data=data, message="Movie fetched successfully", success=True)
         else:
-            return response_data(message="Movie not found",success=False)
+            return response_data(message="Movie not found", success=False)
+        # if len(data) > 0:
+        #     return response_data(data=data,message="movie fetched successfully",success=True)
+        # else:
+        #     return response_data(message="Movie not found",success=False)
             # data = movies.find_one({}) # get movie details with given movie id.
             # if data:
             #     liked = [] # store who liked the movie in the list
