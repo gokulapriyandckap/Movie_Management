@@ -1,7 +1,7 @@
 from main import *
 class Vote():
     def __init__(self, movie_id = None,user_id = None):
-        self.movie_id = ObjectId(movie_id)
+        self.movie_id = movie_id
         self.user_id = user_id
 
     def vote_the_movie(self,vote):
