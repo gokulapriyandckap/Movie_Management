@@ -34,14 +34,21 @@ class movie_management():
     def update_movie(self,updated_data):
         updated_movieName = updated_data["updated_movie_name"] #get the updated movie name from updated data.
         seraialize_movie_name =  serialize_data(updated_movieName) #sent the updated movie to serialize.
-
-        check_access = movies.find({self.user_id,self.movie_id})
-
+        # check_access = movies.count_documents({"user_id":self.user_id,"_id":self.movie_id})
+        check_access = movies.find_one({"user_id":self.user_id,"_id":self.movie_id})
+        # return json_util.dumps(check_access)
         if check_access:
-            return "yes"
+            if check_access["name"] == seraialize_movie_name:
+                update_request = movies.update_one({"name":seraialize_movie_name},{"$set":updated_data})
+            else:
+                exists_movie_name = movies.count_documents({"name":seraialize_movie_name})
+                if exists_movie_name > 1:
+                    return response_data(message="Movie name already exists", success=False)
+                else:
+                    movies.update_one({"_id":self.movie_id},{"$set":updated_data})
+            return response_data(message="Movie updated successfully", success=True)
         else:
-            return "no"
-
+            return response_data(message="Movie not found", success=False)
 
     # create new movie with validation.
     def create_movie(self,movie_data):
