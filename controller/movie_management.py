@@ -136,7 +136,14 @@ class movie_management():
     def show_all_movies(self, get_args):
         filter_obj = filter(get_args,movies) # passing the query params to filter class
         filter_query = filter_obj.filter_query_builder() # get validate query params from filter function
-        pagination_object = Pagination(get_args) # pass the limit and page arguements to paginate class
+        if 'limit' in get_args and 'page' in get_args:
+            pagination_object = Pagination(get_args)  # pass the limit and page arguements to paginate class
+        else:
+            get_args["limit"] = 10
+            get_args["page"] = 1
+            pagination_object = Pagination(get_args)  # pass the limit and page arguements to paginate class
+
+
         data = pagination_object.data(filter_query[0],filter_query[1]) # passing the validate query params to paginate function
         return data
     def delete_movie(self):

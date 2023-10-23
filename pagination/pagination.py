@@ -24,7 +24,7 @@ class Pagination:
         pages = [i for i in range(1, total_no_pages()+1)] # after getting the how many pages it will store in the list by separate value. ex: no.of.pages = 3. in this list store like this = [1,2,3]
         items = (get_filter_args.skip(skip).limit(self.limit))
         items = seiralize_db_data(items)
-        # print((total_movies))
+
 
         # after getting the all elements calling the pagination_response_data function by respective arguments.
         return  response_data(data=items,message="Movies Listed successfully", next=self.page + 1,page=self.page, pages=pages, prev=self.page - 1, status=200,success=True, total=total_no_pages(), total_records=total_movies)
