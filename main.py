@@ -11,7 +11,7 @@ from controller.votes import *
 from pagination.pagination import *
 import hashlib # to hash the password
 import re # regex
-from flask_jwt_extended import create_access_token, jwt_required, JWTManager, get_jwt_identity
+from flask_jwt_extended import create_access_token, jwt_required, JWTManager, get_jwt_identity, unset_jwt_cookies
 from bson import ObjectId
 import requests
 
@@ -170,8 +170,11 @@ def check_filter():
 @app.route("/logout",methods=["POST"])
 @jwt_required()
 def logout():
-    return get_jwt_identity()
-
+    current_user_id = get_jwt_identity()
+    # Unset JWT cookies to invalidate the token on the client side
+    resp = jsonify({'message': 'Logged out successfully'})
+    unset_jwt_cookies(resp)
+    return resp
 
 if __name__ == "__main__":
     # Code inside this block will only run if the script is the main program
