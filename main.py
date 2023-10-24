@@ -114,7 +114,7 @@ def show_all_movies():
     movie_obj = movie_management(user_id=get_jwt_identity()["user_id"])
     return movie_obj.show_all_movies(request.args.to_dict(),get_access=False)
 
-@app.route("/showmovie/my_movie")
+@app.route("/showmovie/my_movie",methods=["GET"])
 @jwt_required()
 def show_my_movie():
     movie_obj = movie_management(user_id=get_jwt_identity()["user_id"])
