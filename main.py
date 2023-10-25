@@ -85,6 +85,10 @@ def user_login():
 def create_movie():
     request.json["user_id"] = get_jwt_identity()["user_id"] # get user id from jwt token and add to the user data
     movie_obj = movie_management()
+    uploaded_file = request.files.getlist('image')
+    file_path = f"static/uploads/{uploaded_file.filename}"
+    uploaded_file.save(file_path)
+    request.json["image_path"] = file_path
     return movie_obj.create_movie(request.json) # call the create movie functon and passing the arguement is user_data
 
 @app.route("/delete/<movie_id>",methods=["DELETE"])
