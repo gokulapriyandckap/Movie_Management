@@ -64,7 +64,11 @@ class movie_management():
             return response_data(message="movie name already exists", success=False)
 
     def show_movie(self):
-        data = movies.find_one({"_id":self.movie_id, "user_id":self.user_id})
+        data = movies.find_one({"_id":self.movie_id})
+        upvote_count = votes.count_documents({"movie_id":str(self.movie_id), "vote":1})
+        downvote_count = votes.count_documents({"movie_id":str(self.movie_id), "vote":0})
+        data["upvote"] = upvote_count
+        data["downvote"] = downvote_count
         if data:
             data = seiralize_db_data(data)
             return response_data(data=data, message="Movie fetched successfully", success=True)
