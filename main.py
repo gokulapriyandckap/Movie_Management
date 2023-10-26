@@ -34,28 +34,9 @@ app.config["JWT_ACCESS_TOKEN_EXPIRES"] = jwt_expires_timedelta
 
 @app.route("/",methods = ["GET","POST"])
 def register():
-    # data = movies.find_one({})
     data = movies.find({})
     return seiralize_db_data(data)
-    # return response_data(data=data,message="fetch")
-    # # output = []
-    # # for items in data:
-    # #     items['_id'] = str(items['_id'])
-    # #     output.append(items)
-    # # return output
-    #
-    # data = movies.find({})
-    # output_data = []
-    # for items in data:
-    #     items["_id"] = str(items["_id"])
-    #     output_data.append(items)
-    #
-    # return output_data
-    # if "_id" in data and isinstance(data["_id"], ObjectId):
-    #     data["_id"] = str(data["_id"])
-    # elif "_id" in data[0]:
-    #     return json_util.dumps(data)
-    # return data
+  
 
 
 
@@ -65,31 +46,37 @@ def create_user():
     name = request.json['name']
     email = request.json['email'] # Get the Json data from the this route.
     password = request.json['password']
-
     user_instance = signup.User(name,email,password) # Instancing the class User in user module.
-
     return user_instance.save_to_db() # To return the save_to_db function to save the datas to the Database.
 
 @app.route("/login",methods=["POST"])
 def user_login():
     email = request.json['email']
     password = request.json['password']
-
     user_data = login.login(email,password)
-
     return user_data.login_verfication()
     
 
-@app.route("/createmovie",methods=["POST","GET"])
+@app.route("/createmovie",methods=["POST"])
 @jwt_required()
 def create_movie():
-    request.json["user_id"] = get_jwt_identity()["user_id"] # get user id from jwt token and add to the user data
     movie_obj = movie_management()
-    uploaded_file = request.files.getlist('image')
-    file_path = f"static/uploads/{uploaded_file.filename}"
-    uploaded_file.save(file_path)
-    request.json["image_path"] = file_path
-    return movie_obj.create_movie(request.json) # call the create movie functon and passing the arguement is user_data
+    movie_data = {}
+    name = request.form.get('name')
+    release_year = request.form.get('release_year')
+    duration = request.form.get('duration')
+    director_name = request.form.get('director_name')
+    star_rating = request.form.get('star_rating')
+    genre = request.form.get('genre')
+    image_file = request.files.get('image_path')
+    is_favourite = request.form.get('is_favourite')
+    if image_file:
+        image_path = f'static/uploads/{image_file.filename}'
+        image_file.save(image_path)
+
+    movie_data.update({"name":name,"release_year":release_year, "duration":duration, "director_name":director_name, "star_rating":star_rating, "genre":genre, "image_path":image_path, "is_favourite":is_favourite,"user_id":get_jwt_identity()["user_id"]})
+    return movie_obj.create_movie(movie_data) # call the create movie functon and passing the arguement is user_data
+
 
 @app.route("/delete/<movie_id>",methods=["DELETE"])
 @jwt_required()
@@ -179,6 +166,8 @@ def logout():
     resp = jsonify({'message': 'Logged out successfully'})
     unset_jwt_cookies(resp)
     return resp
+
+
 
 if __name__ == "__main__":
     # Code inside this block will only run if the script is the main program

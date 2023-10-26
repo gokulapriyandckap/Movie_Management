@@ -32,7 +32,7 @@ class movie_management():
             return response_data(message="your movie collection is already empty!",success=True)
 
     def update_movie(self,updated_data):
-        updated_movieName = updated_data["updated_movie_name"] #get the updated movie name from updated data.
+        updated_movieName = updated_data["name"] #get the updated movie name from updated data.
         seraialize_movie_name =  serialize_data(updated_movieName) #sent the updated movie to serialize.
         updated_data["name"] = seraialize_movie_name
         # check_access = movies.count_documents({"user_id":self.user_id,"_id":self.movie_id})
