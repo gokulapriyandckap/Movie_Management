@@ -1,4 +1,6 @@
 # import Db_connection
+import datetime
+
 import General_Functions.General_functions
 from controller import DB_Connection
 from main import *
@@ -57,8 +59,10 @@ class movie_management():
         checking_data = check_data(movies, {"name":get_serialize_data,"user_id":movie_data["user_id"]})
         if not checking_data:
             movie_data["name"] = get_serialize_data
+            movie_data["created_at"] = datetime.utcnow()
             create(collection_name=movies, get_data=movie_data)
-            return response_data(message="Movie inserted successfully", success=True)
+            get_last_id = list(movies.find({},{"_id":1}).sort("created_at",-1).limit(1))
+            return response_data(data={"movie_id":str(get_last_id[0]["_id"])},message="Movie inserted successfully", success=True)
 
         else:
             return response_data(message="movie name already exists", success=False)
