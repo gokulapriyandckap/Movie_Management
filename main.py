@@ -73,8 +73,10 @@ def create_movie():
     if image_file:
         image_path = f'static/uploads/{image_file.filename}'
         image_file.save(image_path)
+        movie_data.update({"name":name,"release_year":release_year, "duration":duration, "director_name":director_name, "star_rating":star_rating, "genre":genre, "image_path":image_path, "is_favourite":is_favourite,"user_id":get_jwt_identity()["user_id"]})
+    else:
+        movie_data.update({"name":name,"release_year":release_year, "duration":duration, "director_name":director_name, "star_rating":star_rating, "genre":genre,"is_favourite":is_favourite,"user_id":get_jwt_identity()["user_id"]})
 
-    movie_data.update({"name":name,"release_year":release_year, "duration":duration, "director_name":director_name, "star_rating":star_rating, "genre":genre, "image_path":image_path, "is_favourite":is_favourite,"user_id":get_jwt_identity()["user_id"]})
     return movie_obj.create_movie(movie_data) # call the create movie functon and passing the arguement is user_data
 
 @app.route("/delete/<movie_id>",methods=["DELETE"])
