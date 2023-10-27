@@ -21,9 +21,12 @@ class Pagination:
             else:
                 return ((total_movies // self.limit) + 1)
 
+        get_filter_args.append({"$skip":skip})
+        get_filter_args.append({"$limit":self.limit})
+        data = movies.aggregate(get_filter_args)
+
         pages = [i for i in range(1, total_no_pages()+1)] # after getting the how many pages it will store in the list by separate value. ex: no.of.pages = 3. in this list store like this = [1,2,3]
-        items = (get_filter_args.skip(skip).limit(self.limit))
-        items = seiralize_db_data(items)
+        items = seiralize_db_data(data)
 
         # Check if the length of the 'items' list is less than or equal to the limit
         if len(items) <= self.limit:
