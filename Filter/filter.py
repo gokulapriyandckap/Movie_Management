@@ -20,11 +20,60 @@ class filter:
         if self.access:
             self.query.update({"user_id":self.access})
 
-        criteria = self.collection_name.find(self.query)
+        # criteria = self.collection_name.find(self.query)
+
+        pipeline = [
+            # {
+            #     "$addFields": {
+            #         "movie_id_objectId": {"$toObjectId": "$movie_id"}
+            #     }
+            # },
+            {
+                '$lookup': {
+                    'from': 'votes',
+                    'localField': '_id',
+                    'foreignField': "movie_id",
+                    'as': 'likes'
+                }
+            },
+            {
+                '$match':self.query
+            },
+            {
+                '$addFields': {
+                    'likecount': {
+                        '$size': {
+                            '$filter': {
+                                'input': '$likes',
+                                'as': 'like',
+                                'cond': {'$eq': ['$$like.vote', 1]}
+                            }
+                        }
+                    },
+                    'dislikeCount': {
+                        '$size': {
+                            '$filter': {
+                                'input': '$likes',
+                                'as': 'like',
+                                'cond': {'$eq': ['$$like.vote', 0]}
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "$project":{
+                    "likes.movie_id":0,
+                    "likes._id":0,
+                    "likes.user_id":0
+                }
+            }
+        ]
+
+
         count_documents = self.collection_name.count_documents(self.query)
-        data_counts = [criteria, count_documents]
+        data_counts = [pipeline, count_documents]
         return data_counts
-        # return self.query
 
     def search_query_builder(self):
         query = {

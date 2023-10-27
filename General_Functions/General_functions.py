@@ -33,6 +33,7 @@ def seiralize_db_data(data):
     else:
         for item in data:
             item["_id"] = str(item["_id"])
+            print(item)
             list.append(item)
         return list
 
