@@ -4,11 +4,12 @@ from bson import json_util,ObjectId
 
 class filter:
 
-    def __init__(self,args,collection_name,get_access):
+    def __init__(self,args,collection_name,get_access,get_user_id):
         self.args = args
         self.query = {}
         self.collection_name = collection_name
         self.access = get_access
+        self.user_id = get_user_id
 
     def filter_query_builder(self):
         for key, value in self.args.items():
@@ -46,7 +47,12 @@ class filter:
                             '$filter': {
                                 'input': '$likes',
                                 'as': 'like',
-                                'cond': {'$eq': ['$$like.vote', 1]}
+                                'cond':{
+                                    "$and":[
+                                        {'$eq': ['$$like.vote', 1]},
+                                        {'$eq': ['$$like.user_id', self.user_id]}
+                                    ]
+                                }
                             }
                         }
                     },
@@ -55,7 +61,12 @@ class filter:
                             '$filter': {
                                 'input': '$likes',
                                 'as': 'like',
-                                'cond': {'$eq': ['$$like.vote', 0]}
+                                'cond':{
+                                    "$and":[
+                                        {'$eq': ['$$like.vote', 0]},
+                                        {'$eq': ['$$like.user_id', self.user_id]}
+                                    ]
+                                }
                             }
                         }
                     }
@@ -64,8 +75,7 @@ class filter:
             {
                 "$project":{
                     "likes.movie_id":0,
-                    "likes._id":0,
-                    "likes.user_id":0
+                    "likes._id":0
                 }
             }
         ]
