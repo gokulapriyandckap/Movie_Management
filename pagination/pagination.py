@@ -25,6 +25,19 @@ class Pagination:
         items = (get_filter_args.skip(skip).limit(self.limit))
         items = seiralize_db_data(items)
 
-
-        # after getting the all elements calling the pagination_response_data function by respective arguments.
-        return  response_data(data=items,message="Movies Listed successfully", next=self.page + 1,page=self.page, pages=pages, prev=self.page - 1, status=200,success=True, total=total_no_pages(), total_records=total_movies)
+        # Check if the length of the 'items' list is less than or equal to the limit
+        if len(items) <= self.limit:
+            # If 'items' is not empty and there is a next page, set 'next' to the next page number; otherwise, set it to None
+            next_page = self.page + 1 if items and total_no_pages() > self.page else None
+            return response_data(
+                data=items,
+                message="Movies Listed successfully",
+                next=next_page,
+                page=self.page,
+                pages=pages,
+                prev=self.page - 1,
+                status=200,
+                success=True,
+                total_no_pages=total_no_pages(),
+                total_records=total_movies
+            )
