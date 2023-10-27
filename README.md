@@ -1,6 +1,6 @@
 # Movie_Management
 
-# This Repository Contains the Backend APIs collection for the Movie Management such as Register,Login,CRUD the Movie and Voting Options for the movies.
+# This Repository Contains the Backend APIs collection for the Movie Management such as Register,Login,CRUD Operations of the Movie and Voting Options for the movies.
 
 # After Clonining the repository in your machine you need to create Virtual environment.
 
