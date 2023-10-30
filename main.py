@@ -66,11 +66,11 @@ def create_movie():
     release_year = request.form.get('release_year')
     duration = request.form.get('duration')
     director_name = request.form.get('director_name')
-    star_rating = request.form.get('star_rating')
+    star_rating = int(request.form.get('star_rating'))
     description = request.form.get('description')
     genre = request.form.get('genre')
     image_file = request.files.get('image_path')
-    is_favourite = request.form.get('is_favourite')
+    is_favourite = int(request.form.get('is_favourite'))
     if image_file:
         image_path = f'static/uploads/{image_file.filename}'
         image_file.save(image_path)
