@@ -15,7 +15,11 @@
 
 # After Execute the command you can see venv in your code editor's terminal.
 
-# Now you activate the Virtual Environment Now you can run the Python Backend server.
+# Now you need to  activate the Virtual Environment.
+
+# After Activating the virtual environment you need to install all the required packages and modules. To install the required paackges by execute this command -> pip install -r requirement.txt
+
+# Now you can run the Python Backend server.
 
 # To Run the server execute this command in your code editor's terminal -> python3 main.py
 
